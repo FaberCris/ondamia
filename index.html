@@ -4,12 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#1a1035">
-<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>OndaMia — Diario Emozionale</title>
 <link rel="manifest" href="./manifest.json">
-<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="OndaMia">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
@@ -1311,6 +1309,7 @@
       È un gesto concreto: mettere fuori ciò che è dentro.</p>
     </div>
 
+    <div class="section-label">Scegli un'emoji che ti rappresenta</div>
     <div class="emoji-picker" id="emoji-picker">
       <button class="ep-btn" onclick="selectEmoji(this,'😢')">😢</button>
       <button class="ep-btn" onclick="selectEmoji(this,'😤')">😤</button>
@@ -1354,6 +1353,33 @@
       </div>
     </div>
     <div class="spacer"></div>
+  </div>
+
+  <!-- ══════════════════ DIARIO SCREEN ══════════════════ -->
+  <div class="screen" id="screen-diary">
+    <div class="topbar">
+      <div>
+        <h1>Il Mio Diario</h1>
+        <div class="subtitle">Tutte le voci salvate</div>
+      </div>
+      <button class="btn-secondary" onclick="clearDiary()" style="font-size:0.7rem;padding:6px 12px">🗑️ Svuota</button>
+    </div>
+
+    <div style="padding:0 16px 8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px" id="diary-filter-row">
+        <button class="tech-tab active" onclick="filterDiary(this,'all')">Tutte</button>
+        <button class="tech-tab" onclick="filterDiary(this,'corpo')">🫀 Corpo</button>
+        <button class="tech-tab" onclick="filterDiary(this,'meta')">💫 Meta</button>
+        <button class="tech-tab" onclick="filterDiary(this,'journal')">📝 Journal</button>
+        <button class="tech-tab" onclick="filterDiary(this,'respiro')">🌊 Respiro</button>
+        <button class="tech-tab" onclick="filterDiary(this,'mood')">😊 Mood</button>
+      </div>
+      <div id="diary-list" style="display:flex;flex-direction:column;gap:10px;padding-bottom:20px"></div>
+      <div id="diary-empty" style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;display:none">
+        <div style="font-size:2.5rem;margin-bottom:10px">📭</div>
+        Nessuna voce ancora.<br>Inizia esplorando le altre sezioni!
+      </div>
+    </div>
   </div>
 
   <!-- ── BOTTOM NAV ── -->
@@ -1405,6 +1431,14 @@
         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
       </svg>
       Scatola
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="navigate('diary',this)" id="nav-diary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+      </svg>
+      Diario
       <div class="nav-dot"></div>
     </button>
   </nav>
@@ -1468,6 +1502,7 @@ function navigate(screen, btn) {
   if (screen === 'home') refreshHome();
   if (screen === 'journal') refreshReframing();
   if (screen === 'box') refreshBox();
+  if (screen === 'diary') renderDiary();
   if (screen === 'meta') refreshMeta();
   if (screen === 'reg') resetBreathing();
 }
@@ -2092,6 +2127,66 @@ function init() {
   }
 
   // manifest.json è esterno (vedi /manifest.json)
+}
+
+
+// ══════════════════════════════════════════
+//  DIARIO SCREEN
+// ══════════════════════════════════════════
+let currentFilter = 'all';
+
+function filterDiary(btn, type) {
+  document.querySelectorAll('#diary-filter-row .tech-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = type;
+  renderDiary();
+}
+
+function renderDiary() {
+  const db = loadDB();
+  let entries = db.entries.slice().reverse();
+  if (currentFilter !== 'all') entries = entries.filter(e => e.type === currentFilter);
+
+  const list = document.getElementById('diary-list');
+  const empty = document.getElementById('diary-empty');
+
+  if (entries.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  list.innerHTML = entries.map((e, i) => {
+    const date = new Date(e.ts).toLocaleString('it-IT', {
+      weekday:'short', day:'numeric', month:'short',
+      hour:'2-digit', minute:'2-digit'
+    });
+    const typeLabel = {
+      corpo:'🫀 Corpo', meta:'💫 Meta-emozione', journal:'📝 Journal',
+      respiro:'🌊 Respiro', mood:'😊 Mood rapido'
+    }[e.type] || '📌 Nota';
+
+    return \`<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start">
+      <div style="font-size:1.8rem;flex-shrink:0">\${e.emoji || '📝'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:0.7rem;color:var(--accent);margin-bottom:3px">\${typeLabel}</div>
+        <div style="font-size:0.9rem;font-weight:500;margin-bottom:4px">\${e.emotion || 'Voce'}</div>
+        \${e.text ? \`<div style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical">\${e.text}</div>\` : ''}
+        <div style="font-size:0.65rem;color:var(--text-muted);margin-top:6px">🕐 \${date}</div>
+      </div>
+    </div>\`;
+  }).join('');
+}
+
+function clearDiary() {
+  if (!confirm('Sei sicuro di voler cancellare tutte le voci del diario? Non è reversibile.')) return;
+  const db = loadDB();
+  db.entries = [];
+  saveDB(db);
+  renderDiary();
+  refreshHome();
+  showToast('🗑️ Diario svuotato');
 }
 
 window.addEventListener('DOMContentLoaded', init);
