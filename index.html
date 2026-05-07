@@ -207,6 +207,8 @@
     align-items: center;
   }
   .mood-row::-webkit-scrollbar { display: none; }
+  .mood-row.dragging, .emoji-picker.dragging, .avatar-row.dragging { cursor: grabbing !important; user-select: none; }
+  .mood-row, .emoji-picker, .avatar-row { cursor: grab; }
   .mood-chip {
     flex-shrink: 0;
     display: flex;
@@ -2209,6 +2211,39 @@ if ('serviceWorker' in navigator) {
     console.log('[OndaMia] SW registrato:', reg.scope);
   }).catch(err => console.warn('[OndaMia] SW errore:', err));
 }
+
+// ══════════════════════════════════════════
+//  DRAG TO SCROLL (mouse desktop)
+// ══════════════════════════════════════════
+function enableDragScroll(el) {
+  if (!el) return;
+  let isDown = false, startX, scrollLeft;
+  el.addEventListener('mousedown', e => {
+    isDown = true;
+    el.classList.add('dragging');
+    startX = e.pageX - el.offsetLeft;
+    scrollLeft = el.scrollLeft;
+  });
+  el.addEventListener('mouseleave', () => { isDown = false; el.classList.remove('dragging'); });
+  el.addEventListener('mouseup', () => { isDown = false; el.classList.remove('dragging'); });
+  el.addEventListener('mousemove', e => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - el.offsetLeft;
+    el.scrollLeft = scrollLeft - (x - startX) * 1.2;
+  });
+}
+
+// Attiva drag-scroll su tutte le righe orizzontali
+document.addEventListener('DOMContentLoaded', () => {
+  ['mood-row','emoji-picker','avatar-row','technique-tabs','color-row'].forEach(id => {
+    // per id
+    const byId = document.getElementById(id);
+    if (byId) enableDragScroll(byId);
+    // per classe
+    document.querySelectorAll('.' + id).forEach(el => enableDragScroll(el));
+  });
+});
 </script>
 </body>
 </html>
