@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a1035">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>OndaMia — Diario Emozionale</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="OndaMia">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<meta name="msapplication-TileImage" content="/icons/icon-144.png">
+<meta name="msapplication-TileColor" content="#1a1035">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0e0b20;
+    --bg2: #16122e;
+    --card: #1e1a38;
+    --card2: #252041;
+    --accent: #c084fc;
+    --accent2: #818cf8;
+    --accent3: #34d399;
+    --warm: #fb923c;
+    --danger: #f87171;
+    --text: #e2e0f0;
+    --text-muted: #8b87b0;
+    --border: rgba(192,132,252,0.15);
+    --glow: rgba(192,132,252,0.25);
+    --radius: 20px;
+    --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+  }
+
+  /* ── APP SHELL ── */
+  #app {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 80px;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+  .screen.active { display: flex; }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    padding: 18px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: linear-gradient(to bottom, var(--bg) 80%, transparent);
+  }
+  .topbar h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .topbar .subtitle {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .streak-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    color: var(--warm);
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: rgba(14,11,32,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    z-index: 100;
+    padding: 8px 0 env(safe-area-inset-bottom, 8px);
+  }
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 4px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.6rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color var(--transition);
+  }
+  .nav-btn.active { color: var(--accent); }
+  .nav-btn svg { width: 22px; height: 22px; }
+  .nav-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 2px;
+    opacity: 0;
+    transition: opacity var(--transition);
+  }
+  .nav-btn.active .nav-dot { opacity: 1; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin: 0 16px 14px;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .card-sub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  /* ── HOME SCREEN ── */
+  .wave-header {
+    padding: 10px 20px 20px;
+    text-align: center;
+    position: relative;
+  }
+  .wave-header .date-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .wave-header .greeting {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    line-height: 1.2;
+  }
+  .wave-header .greeting span {
+    background: linear-gradient(135deg, var(--accent), var(--warm));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* mood quick-pick */
+  .mood-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 0 16px 4px;
+    scrollbar-width: none;
+  }
+  .mood-row::-webkit-scrollbar { display: none; }
+  .mood-chip {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all var(--transition);
+    min-width: 64px;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+  }
+  .mood-chip:hover, .mood-chip.selected {
+    border-color: var(--accent);
+    background: var(--card2);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .mood-chip .emoji { font-size: 1.6rem; }
+
+  /* recent entries */
+  .entry-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: opacity var(--transition);
+  }
+  .entry-item:last-child { border-bottom: none; }
+  .entry-dot {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .entry-info { flex: 1; }
+  .entry-name { font-size: 0.9rem; font-weight: 500; }
+  .entry-time { font-size: 0.7rem; color: var(--text-muted); }
+  .entry-tag {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  /* ── BODY MAP SCREEN ── */
+  #screen-body { padding-bottom: 90px; }
+  .body-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 16px;
+    gap: 16px;
+  }
+  .body-instructions {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.5;
+    padding: 0 10px;
+  }
+  .body-svg-wrap {
+    position: relative;
+    width: 220px;
+    height: 370px;
+    cursor: pointer;
+  }
+  .body-svg-wrap svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 20px var(--glow));
+  }
+  .body-hotspot {
+    position: absolute;
+    border-radius: 50%;
+    animation: pulse-spot 2s ease-in-out infinite;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+  }
+  .body-hotspot.tension {
+    background: radial-gradient(circle, rgba(248,113,113,0.7), rgba(248,113,113,0));
+  }
+  .body-hotspot.warmth {
+    background: radial-gradient(circle, rgba(251,146,60,0.7), rgba(251,146,60,0));
+  }
+  .body-hotspot.heaviness {
+    background: radial-gradient(circle, rgba(129,140,248,0.7), rgba(129,140,248,0));
+  }
+  @keyframes pulse-spot {
+    0%, 100% { transform: translate(-50%,-50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%,-50%) scale(1.3); opacity: 1; }
+  }
+  .body-legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* sensation picker */
+  .sensation-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+  .sensation-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all var(--transition);
+  }
+  .sensation-btn:hover, .sensation-btn.selected {
+    border-color: var(--accent);
+    background: var(--card2);
+    box-shadow: 0 0 12px var(--glow);
+  }
+  .sensation-btn .s-emoji { font-size: 1.1rem; }
+
+  /* emotion result */
+  .emotion-result {
+    background: linear-gradient(135deg, var(--card2), var(--card));
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 18px;
+    text-align: center;
+    width: 100%;
+    display: none;
+  }
+  .emotion-result.show { display: block; }
+  .emotion-result .em-emoji { font-size: 2.5rem; margin-bottom: 8px; }
+  .emotion-result .em-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .emotion-result .em-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 30px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.85rem;
+    padding: 11px 24px;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px var(--glow); }
+  .btn-secondary {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+  /* ── META-EMOZIONI SCREEN ── */
+  .meta-intro {
+    text-align: center;
+    padding: 16px 20px 6px;
+  }
+  .meta-intro h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+  }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 0 16px;
+  }
+  .meta-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 12px;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-align: center;
+  }
+  .meta-card:hover, .meta-card.selected {
+    border-color: var(--accent);
+    background: var(--card2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px var(--glow);
+  }
+  .meta-card .mc-emoji { font-size: 2rem; margin-bottom: 6px; }
+  .meta-card .mc-name { font-size: 0.82rem; font-weight: 500; margin-bottom: 3px; }
+  .meta-card .mc-story { font-size: 0.68rem; color: var(--text-muted); line-height: 1.4; }
+
+  /* avatar avatars */
+  .avatar-row {
+    display: flex;
+    gap: 10px;
+    padding: 0 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .avatar-row::-webkit-scrollbar { display: none; }
+  .avatar-btn {
+    flex-shrink: 0;
+    width: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    background: var(--card);
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 10px 6px;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-size: 0.62rem;
+    color: var(--text-muted);
+  }
+  .avatar-btn.selected { border-color: var(--accent); color: var(--accent); }
+  .avatar-btn .av-face { font-size: 1.8rem; }
+
+  /* ── REGOLAZIONE (Breathing) SCREEN ── */
+  .breathing-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 20px 20px;
+    gap: 20px;
+  }
+  .breath-circle-wrap {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .breath-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    opacity: 0.3;
+  }
+  .breath-ring:nth-child(1) { width: 200px; height: 200px; }
+  .breath-ring:nth-child(2) { width: 160px; height: 160px; opacity: 0.5; }
+  .breath-circle {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--accent2), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #fff;
+    transition: transform 4s ease-in-out;
+    cursor: pointer;
+    box-shadow: 0 0 40px var(--glow);
+  }
+  .breath-circle.inhale { transform: scale(1.35); }
+  .breath-circle.exhale { transform: scale(0.85); }
+  .breath-circle.hold { transform: scale(1.35); }
+
+  .technique-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 16px;
+    width: 100%;
+  }
+  .technique-tabs::-webkit-scrollbar { display: none; }
+  .tech-tab {
+    flex-shrink: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 7px 14px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .tech-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .mindfulness-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    width: 100%;
+  }
+  .mindfulness-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    color: var(--accent);
+  }
+  .mindfulness-card p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .mindfulness-card ol, .mindfulness-card ul {
+    margin: 10px 0 0 16px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  /* progress */
+  .breath-progress {
+    width: 100%;
+    background: var(--card);
+    border-radius: 30px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .breath-progress-bar {
+    height: 100%;
+    background: linear-gradient(to right, var(--accent), var(--accent2));
+    border-radius: 30px;
+    transition: width 1s linear;
+    width: 0%;
+  }
+
+  /* ── JOURNALING SCREEN ── */
+  .journal-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 0 16px;
+  }
+  .journal-action-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 14px;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .journal-action-btn:hover { border-color: var(--accent); background: var(--card2); }
+  .journal-action-btn .ja-icon { font-size: 1.8rem; }
+  .journal-action-btn .ja-title { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+  .journal-action-btn .ja-desc { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
+
+  .color-picker-section {
+    padding: 0 16px;
+  }
+  .color-title {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .color-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .color-swatch {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all var(--transition);
+  }
+  .color-swatch:hover, .color-swatch.selected {
+    border-color: #fff;
+    transform: scale(1.15);
+  }
+
+  .journal-textarea {
+    width: 100%;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    resize: none;
+    outline: none;
+    line-height: 1.6;
+    min-height: 120px;
+    transition: border-color var(--transition);
+  }
+  .journal-textarea:focus { border-color: var(--accent); }
+  .journal-textarea::placeholder { color: var(--text-muted); }
+
+  .reframing-q {
+    background: var(--card);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 14px 14px 0;
+    padding: 14px;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.5;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+  }
+  .reframing-q:hover { background: var(--card2); }
+  .reframing-q .rq-tag {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-style: normal;
+    color: var(--accent);
+    background: rgba(192,132,252,0.1);
+    border-radius: 20px;
+    padding: 2px 8px;
+    margin-bottom: 6px;
+  }
+
+  /* ── SCATOLA EMOZIONI SCREEN ── */
+  .box-header {
+    text-align: center;
+    padding: 10px 20px 16px;
+  }
+  .box-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+  }
+  .box-header p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+
+  .deposit-area {
+    margin: 0 16px;
+    background: var(--card);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    min-height: 180px;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-content: flex-start;
+    transition: border-color var(--transition);
+  }
+  .deposit-area.drag-over { border-color: var(--accent); background: var(--card2); }
+  .deposit-hint {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    pointer-events: none;
+  }
+  .deposit-hint .dh-icon { font-size: 2rem; margin-bottom: 6px; }
+
+  .deposited-item {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 0.82rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+  }
+  .deposited-item:hover { border-color: var(--danger); }
+  .deposited-item .di-time { font-size: 0.6rem; color: var(--text-muted); }
+  @keyframes pop-in {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .deposit-input-row {
+    display: flex;
+    gap: 8px;
+    padding: 0 16px;
+  }
+  .deposit-input {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 11px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    outline: none;
+    transition: border-color var(--transition);
+  }
+  .deposit-input:focus { border-color: var(--accent); }
+  .deposit-input::placeholder { color: var(--text-muted); }
+
+  .emoji-picker {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 16px 4px;
+    scrollbar-width: none;
+  }
+  .emoji-picker::-webkit-scrollbar { display: none; }
+  .ep-btn {
+    flex-shrink: 0;
+    font-size: 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    width: 44px; height: 44px;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ep-btn:hover { border-color: var(--accent); transform: scale(1.1); }
+  .ep-btn.selected { border-color: var(--accent); background: var(--card2); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-sheet {
+    background: var(--card);
+    border-radius: 24px 24px 0 0;
+    padding: 24px 20px 40px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: slide-up 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes slide-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .modal-handle {
+    width: 36px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 18px;
+  }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: var(--card2);
+    border: 1px solid var(--accent);
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-size: 0.82rem;
+    color: var(--text);
+    z-index: 300;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 16px 20px 6px;
+  }
+
+  /* misc */
+  .spacer { height: 16px; }
+  .center { text-align: center; }
+  .gap-col { display: flex; flex-direction: column; gap: 10px; padding: 0 16px; }
+
+  .stat-row {
+    display: flex;
+    gap: 10px;
+    padding: 0 16px;
+  }
+  .stat-box {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-box .sb-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--accent);
+  }
+  .stat-box .sb-label { font-size: 0.65rem; color: var(--text-muted); margin-top: 2px; }
+
+  /* breathing phase label */
+  #breath-phase-label {
+    font-size: 1rem;
+    color: var(--text-muted);
+    text-align: center;
+    min-height: 1.5em;
+  }
+  #breath-count-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  /* body area click highlight */
+  .body-area-hit {
+    fill: transparent;
+    cursor: pointer;
+    transition: fill 0.2s;
+  }
+  .body-area-hit:hover { fill: rgba(192,132,252,0.08); }
+  .body-area-hit.active { fill: rgba(192,132,252,0.15); }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- ── TOAST ── -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ══════════════════ HOME SCREEN ══════════════════ -->
+  <div class="screen active" id="screen-home">
+    <div class="topbar">
+      <div>
+        <h1>OndaMia</h1>
+        <div class="subtitle">Diario Emozionale</div>
+      </div>
+      <div class="streak-badge">🔥 <span id="streak-count">1</span> giorni</div>
+    </div>
+
+    <div class="wave-header">
+      <div class="date-label" id="today-label"></div>
+      <div class="greeting">Come stai <span id="greeting-wave">oggi?</span></div>
+    </div>
+
+    <div class="section-label">Come ti senti ora?</div>
+    <div class="mood-row" id="mood-row">
+      <div class="mood-chip" data-mood="bene" onclick="quickMood(this)">
+        <span class="emoji">😊</span>Bene
+      </div>
+      <div class="mood-chip" data-mood="cosi-cosi" onclick="quickMood(this)">
+        <span class="emoji">😐</span>Così così
+      </div>
+      <div class="mood-chip" data-mood="stressato" onclick="quickMood(this)">
+        <span class="emoji">😤</span>Stressato
+      </div>
+      <div class="mood-chip" data-mood="triste" onclick="quickMood(this)">
+        <span class="emoji">😢</span>Triste
+      </div>
+      <div class="mood-chip" data-mood="arrabbiato" onclick="quickMood(this)">
+        <span class="emoji">😠</span>Arrabbiato
+      </div>
+      <div class="mood-chip" data-mood="confuso" onclick="quickMood(this)">
+        <span class="emoji">😕</span>Confuso
+      </div>
+      <div class="mood-chip" data-mood="euforico" onclick="quickMood(this)">
+        <span class="emoji">🤩</span>Euforico
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="sb-val" id="entries-count">0</div>
+        <div class="sb-label">Voci nel diario</div>
+      </div>
+      <div class="stat-box">
+        <div class="sb-val" id="breath-sessions">0</div>
+        <div class="sb-label">Sessioni respiro</div>
+      </div>
+      <div class="stat-box">
+        <div class="sb-val" id="box-count">0</div>
+        <div class="sb-label">Emozioni depositate</div>
+      </div>
+    </div>
+
+    <div class="section-label">Ultime voci</div>
+    <div class="card">
+      <div id="recent-entries-list">
+        <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:0.82rem;">
+          Nessuna voce ancora.<br>Inizia esplorando il tuo corpo 👇
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Suggerimento del giorno</div>
+    <div class="card" id="daily-tip">
+      <div class="card-title">💡 Onda del giorno</div>
+      <div class="card-sub" id="tip-text"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ BODY MAP SCREEN ══════════════════ -->
+  <div class="screen" id="screen-body">
+    <div class="topbar">
+      <div>
+        <h1>Mappa Corporea</h1>
+        <div class="subtitle">Dove lo senti?</div>
+      </div>
+    </div>
+
+    <div class="body-container">
+      <div class="body-instructions">
+        Tocca la parte del corpo dove senti qualcosa.<br>
+        Non serve sapere il nome: parti dalla sensazione.
+      </div>
+
+      <!-- SVG Body -->
+      <div class="body-svg-wrap" id="body-svg-wrap">
+        <svg viewBox="0 0 140 360" xmlns="http://www.w3.org/2000/svg">
+          <!-- Glow background -->
+          <defs>
+            <radialGradient id="bodyGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#c084fc" stop-opacity="0.05"/>
+              <stop offset="100%" stop-color="#c084fc" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="gf">
+              <feGaussianBlur stdDeviation="1.5" result="blur"/>
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+          </defs>
+          <ellipse cx="70" cy="180" rx="60" ry="160" fill="url(#bodyGlow)"/>
+
+          <!-- Body fill -->
+          <g stroke="#c084fc" stroke-width="1.2" fill="rgba(192,132,252,0.05)">
+            <!-- Head -->
+            <ellipse cx="70" cy="32" rx="22" ry="26"/>
+            <!-- Neck -->
+            <rect x="62" y="56" width="16" height="12" rx="4"/>
+            <!-- Torso -->
+            <path d="M42 68 Q28 80 26 120 Q24 160 30 180 L110 180 Q116 160 114 120 Q112 80 98 68 Z"/>
+            <!-- Left arm -->
+            <path d="M42 72 Q20 90 16 140 Q14 165 20 175 L30 175 Q36 165 36 140 Q38 110 50 92 Z"/>
+            <!-- Right arm -->
+            <path d="M98 72 Q120 90 124 140 Q126 165 120 175 L110 175 Q104 165 104 140 Q102 110 90 92 Z"/>
+            <!-- Left hand -->
+            <ellipse cx="20" cy="182" rx="9" ry="13"/>
+            <!-- Right hand -->
+            <ellipse cx="120" cy="182" rx="9" ry="13"/>
+            <!-- Left leg -->
+            <path d="M50 180 Q44 220 42 260 Q40 300 44 330 L60 330 Q64 300 64 260 Q66 220 68 180 Z"/>
+            <!-- Right leg -->
+            <path d="M90 180 Q96 220 98 260 Q100 300 96 330 L80 330 Q76 300 76 260 Q74 220 72 180 Z"/>
+            <!-- Left foot -->
+            <ellipse cx="52" cy="342" rx="12" ry="8"/>
+            <!-- Right foot -->
+            <ellipse cx="88" cy="342" rx="12" ry="8"/>
+          </g>
+
+          <!-- Clickable hit areas (transparent) -->
+          <!-- Head -->
+          <ellipse class="body-area-hit" id="area-head" cx="70" cy="32" rx="22" ry="26"
+            onclick="selectBodyArea('testa','Testa','😤','tensione alla testa')"/>
+          <!-- Throat/Neck -->
+          <rect class="body-area-hit" id="area-throat" x="55" y="54" width="30" height="18" rx="5"
+            onclick="selectBodyArea('gola','Gola / Petto alto','😶','nodo alla gola')"/>
+          <!-- Chest -->
+          <ellipse class="body-area-hit" id="area-chest" cx="70" cy="105" rx="28" ry="22"
+            onclick="selectBodyArea('petto','Petto','💙','peso o calore al petto')"/>
+          <!-- Stomach -->
+          <ellipse class="body-area-hit" id="area-stomach" cx="70" cy="148" rx="24" ry="18"
+            onclick="selectBodyArea('stomaco','Stomaco','🦋','farfalle o contrazione allo stomaco')"/>
+          <!-- Left shoulder -->
+          <ellipse class="body-area-hit" id="area-lshoulder" cx="36" cy="80" rx="14" ry="10"
+            onclick="selectBodyArea('spalla','Spalle','⚡','tensione alle spalle')"/>
+          <!-- Right shoulder -->
+          <ellipse class="body-area-hit" id="area-rshoulder" cx="104" cy="80" rx="14" ry="10"
+            onclick="selectBodyArea('spalla','Spalle','⚡','tensione alle spalle')"/>
+          <!-- Left arm -->
+          <ellipse class="body-area-hit" id="area-larm" cx="22" cy="135" rx="10" ry="25"
+            onclick="selectBodyArea('braccia','Braccia','💪','formicolio o pesantezza alle braccia')"/>
+          <!-- Right arm -->
+          <ellipse class="body-area-hit" id="area-rarm" cx="118" cy="135" rx="10" ry="25"
+            onclick="selectBodyArea('braccia','Braccia','💪','formicolio o pesantezza alle braccia')"/>
+          <!-- Abdomen/hips -->
+          <ellipse class="body-area-hit" id="area-belly" cx="70" cy="172" rx="22" ry="12"
+            onclick="selectBodyArea('pancia','Pancia / Fianchi','🌀','tensione o calore all\'addome')"/>
+          <!-- Left leg -->
+          <ellipse class="body-area-hit" id="area-lleg" cx="53" cy="258" rx="12" ry="42"
+            onclick="selectBodyArea('gambe','Gambe','🦵','gambe pesanti o irrequiete')"/>
+          <!-- Right leg -->
+          <ellipse class="body-area-hit" id="area-rleg" cx="87" cy="258" rx="12" ry="42"
+            onclick="selectBodyArea('gambe','Gambe','🦵','gambe pesanti o irrequiete')"/>
+        </svg>
+      </div>
+
+      <div class="body-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Tensione</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--warm)"></div>Calore</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div>Pesantezza</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div>Formicolio</div>
+      </div>
+    </div>
+
+    <!-- Sensation picker (shown after area click) -->
+    <div id="sensation-section" style="display:none;padding:0 16px;">
+      <div class="section-label" style="padding:0 0 8px;">Che tipo di sensazione senti in <span id="area-name-label" style="color:var(--accent)"></span>?</div>
+      <div class="sensation-grid" id="sensation-grid">
+        <button class="sensation-btn" onclick="selectSensation('tensione','😤','Ho tensione, come un muscolo contratto')">
+          <span class="s-emoji">😤</span>Tensione / Contrazione
+        </button>
+        <button class="sensation-btn" onclick="selectSensation('calore','🔥','Sento calore o bruciore')">
+          <span class="s-emoji">🔥</span>Calore / Bruciore
+        </button>
+        <button class="sensation-btn" onclick="selectSensation('peso','🏋️','Sento un peso o pressione')">
+          <span class="s-emoji">🏋️</span>Peso / Pressione
+        </button>
+        <button class="sensation-btn" onclick="selectSensation('nodo','🪢','Ho un nodo, qualcosa di bloccato')">
+          <span class="s-emoji">🪢</span>Nodo / Blocco
+        </button>
+        <button class="sensation-btn" onclick="selectSensation('vuoto','🌀','Sento vuoto o un buco dentro')">
+          <span class="s-emoji">🌀</span>Vuoto / Leggero
+        </button>
+        <button class="sensation-btn" onclick="selectSensation('formicolio','⚡','Formicolio, vibrazione, energia')">
+          <span class="s-emoji">⚡</span>Formicolio / Energia
+        </button>
+      </div>
+
+      <div class="spacer"></div>
+
+      <!-- Emotion result -->
+      <div class="emotion-result" id="emotion-result">
+        <div class="em-emoji" id="em-emoji">😢</div>
+        <div class="em-name" id="em-name">Tristezza</div>
+        <div class="em-desc" id="em-desc">Il peso che senti potrebbe essere tristezza. È normale: la tristezza non è un difetto, è un segnale che qualcosa è importante per te.</div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="saveFromBody()">💾 Salva nel diario</button>
+          <button class="btn-secondary" onclick="goToBreathing()">🌊 Respira con me</button>
+        </div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ══════════════════ META-EMOZIONI SCREEN ══════════════════ -->
+  <div class="screen" id="screen-meta">
+    <div class="topbar">
+      <div>
+        <h1>Meta-Emozioni</h1>
+        <div class="subtitle">Sfumature più profonde</div>
+      </div>
+    </div>
+
+    <div class="meta-intro">
+      <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.5">
+        A volte le emozioni non si chiamano solo "triste" o "felice".<br>
+        Scegli un avatar che ti rappresenta in questo momento.
+      </p>
+    </div>
+
+    <div class="section-label">Scegli il tuo avatar</div>
+    <div class="avatar-row" id="avatar-row">
+      <button class="avatar-btn" onclick="selectAvatar(this,'🧊','Il Ghiaccio')">
+        <span class="av-face">🧊</span>Il Ghiaccio
+      </button>
+      <button class="avatar-btn" onclick="selectAvatar(this,'🌊','L\'Onda')">
+        <span class="av-face">🌊</span>L'Onda
+      </button>
+      <button class="avatar-btn" onclick="selectAvatar(this,'🌪️','Il Vortice')">
+        <span class="av-face">🌪️</span>Il Vortice
+      </button>
+      <button class="avatar-btn" onclick="selectAvatar(this,'🌱','Il Germoglio')">
+        <span class="av-face">🌱</span>Il Germoglio
+      </button>
+      <button class="avatar-btn" onclick="selectAvatar(this,'🌙','La Luna')">
+        <span class="av-face">🌙</span>La Luna
+      </button>
+      <button class="avatar-btn" onclick="selectAvatar(this,'☀️','Il Sole')">
+        <span class="av-face">☀️</span>Il Sole
+      </button>
+      <button class="avatar-btn" onclick="selectAvatar(this,'⚡','Il Fulmine')">
+        <span class="av-face">⚡</span>Il Fulmine
+      </button>
+    </div>
+
+    <div class="section-label">Quale sfumatura riconosci?</div>
+    <div class="meta-grid" id="meta-grid">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="spacer"></div>
+    <div style="padding:0 16px;" id="meta-story-section" style="display:none">
+      <div class="section-label" style="padding:0 0 8px">La tua storia</div>
+      <div class="card" id="meta-story-card" style="display:none">
+        <div class="card-title" id="meta-story-title"></div>
+        <div class="card-sub" id="meta-story-text"></div>
+        <div class="btn-row" style="margin-top:12px">
+          <button class="btn-primary" onclick="saveMetaEmotion()">💾 Salva</button>
+          <button class="btn-secondary" onclick="goToJournal()">📝 Journaling</button>
+        </div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ══════════════════ REGOLAZIONE SCREEN ══════════════════ -->
+  <div class="screen" id="screen-reg">
+    <div class="topbar">
+      <div>
+        <h1>Regolazione</h1>
+        <div class="subtitle">Respira · Mindfulness</div>
+      </div>
+    </div>
+
+    <div class="technique-tabs" id="tech-tabs">
+      <button class="tech-tab active" onclick="selectTech(this,'box')">Respirazione Box</button>
+      <button class="tech-tab" onclick="selectTech(this,'478')">4-7-8</button>
+      <button class="tech-tab" onclick="selectTech(this,'coerenza')">Coerenza Cardiaca</button>
+      <button class="tech-tab" onclick="selectTech(this,'5-4-3')">5-4-3-2-1</button>
+    </div>
+
+    <div class="breathing-container">
+      <div class="breath-circle-wrap">
+        <div class="breath-ring"></div>
+        <div class="breath-ring"></div>
+        <div class="breath-circle" id="breath-circle" onclick="startBreathing()">
+          Tocca<br>per iniziare
+        </div>
+      </div>
+
+      <div id="breath-phase-label"></div>
+      <div id="breath-count-label"></div>
+
+      <div class="breath-progress">
+        <div class="breath-progress-bar" id="breath-bar"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="breath-start-btn" onclick="startBreathing()">▶ Inizia</button>
+        <button class="btn-secondary" id="breath-stop-btn" onclick="stopBreathing()" style="display:none">⏹ Ferma</button>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="section-label">La tecnica</div>
+    <div class="mindfulness-card" id="tech-description" style="margin:0 16px"></div>
+
+    <div class="spacer"></div>
+    <div class="section-label">Grounding 5-4-3-2-1</div>
+    <div class="mindfulness-card" style="margin:0 16px">
+      <h3>🌿 Torna al presente</h3>
+      <p>Quando sei sopraffatto, usa i tuoi sensi:</p>
+      <ol>
+        <li>Nomina <strong>5 cose</strong> che puoi vedere</li>
+        <li>Tocca <strong>4 oggetti</strong> intorno a te</li>
+        <li>Ascolta <strong>3 suoni</strong> nell'ambiente</li>
+        <li>Annusa <strong>2 profumi</strong></li>
+        <li>Assapora <strong>1 sapore</strong></li>
+      </ol>
+      <div style="margin-top:12px">
+        <button class="btn-primary" onclick="saveBreathSession()">✅ Sessione completata</button>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ══════════════════ JOURNALING SCREEN ══════════════════ -->
+  <div class="screen" id="screen-journal">
+    <div class="topbar">
+      <div>
+        <h1>Journaling</h1>
+        <div class="subtitle">Narrazione creativa</div>
+      </div>
+    </div>
+
+    <div class="section-label">Trasforma il blocco</div>
+    <div class="journal-actions">
+      <button class="journal-action-btn" onclick="openJournalAction('canzone')">
+        <span class="ja-icon">🎵</span>
+        <span class="ja-title">Scrivi una canzone</span>
+        <span class="ja-desc">Anche solo 4 righe. Il ritmo libera.</span>
+      </button>
+      <button class="journal-action-btn" onclick="openJournalAction('colore')">
+        <span class="ja-icon">🎨</span>
+        <span class="ja-title">Scegli un colore</span>
+        <span class="ja-desc">Quale colore sei oggi?</span>
+      </button>
+      <button class="journal-action-btn" onclick="openJournalAction('lettera')">
+        <span class="ja-icon">✉️</span>
+        <span class="ja-title">Scrivi una lettera</span>
+        <span class="ja-desc">A te del futuro, o a chi vuoi.</span>
+      </button>
+      <button class="journal-action-btn" onclick="openJournalAction('foto')">
+        <span class="ja-icon">📸</span>
+        <span class="ja-title">Descrivi una foto</span>
+        <span class="ja-desc">Cosa fotograferesti ora?</span>
+      </button>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="color-picker-section">
+      <div class="color-title">Il colore del tuo umore oggi</div>
+      <div class="color-row" id="color-row">
+        <div class="color-swatch" style="background:#f87171" onclick="selectColor(this,'Rosso — energia, rabbia, passione')" title="Rosso"></div>
+        <div class="color-swatch" style="background:#fb923c" onclick="selectColor(this,'Arancione — calore, creatività, entusiasmo')" title="Arancione"></div>
+        <div class="color-swatch" style="background:#fbbf24" onclick="selectColor(this,'Giallo — gioia, speranza, ansia')" title="Giallo"></div>
+        <div class="color-swatch" style="background:#34d399" onclick="selectColor(this,'Verde — calma, crescita, speranza')" title="Verde"></div>
+        <div class="color-swatch" style="background:#60a5fa" onclick="selectColor(this,'Azzurro — serenità, malinconia, spazio')" title="Azzurro"></div>
+        <div class="color-swatch" style="background:#818cf8" onclick="selectColor(this,'Indaco — profondità, mistero, introspezione')" title="Indaco"></div>
+        <div class="color-swatch" style="background:#c084fc" onclick="selectColor(this,'Viola — creatività, spiritualità, trasformazione')" title="Viola"></div>
+        <div class="color-swatch" style="background:#f472b6" onclick="selectColor(this,'Rosa — tenerezza, vulnerabilità, amore')" title="Rosa"></div>
+        <div class="color-swatch" style="background:#94a3b8" onclick="selectColor(this,'Grigio — neutralità, stanchezza, pausa')" title="Grigio"></div>
+        <div class="color-swatch" style="background:#1e293b" onclick="selectColor(this,'Nero — silenzio, peso, profondità')" title="Nero"></div>
+      </div>
+      <div id="color-meaning" style="text-align:center;font-size:0.78rem;color:var(--accent);margin-top:8px;min-height:1.4em;font-style:italic;"></div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="section-label">Spazio libero</div>
+    <div style="padding:0 16px">
+      <textarea class="journal-textarea" id="free-journal" placeholder="Scrivi quello che senti. Nessuno leggerà questo spazio eccetto te…" rows="5"></textarea>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button class="btn-primary" onclick="saveJournalEntry()" style="flex:1">💾 Salva voce</button>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="section-label">Reframing Positivo</div>
+    <div class="gap-col" id="reframing-list">
+      <!-- filled by JS based on last emotion -->
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ══════════════════ SCATOLA SCREEN ══════════════════ -->
+  <div class="screen" id="screen-box">
+    <div class="topbar">
+      <div>
+        <h1>Scatola Emotiva</h1>
+        <div class="subtitle">Deposita quello che senti</div>
+      </div>
+    </div>
+
+    <div class="box-header">
+      <p>Qui puoi depositare un pensiero, un'emoji o una parola.<br>
+      È un gesto concreto: mettere fuori ciò che è dentro.</p>
+    </div>
+
+    <div class="emoji-picker" id="emoji-picker">
+      <button class="ep-btn" onclick="selectEmoji(this,'😢')">😢</button>
+      <button class="ep-btn" onclick="selectEmoji(this,'😤')">😤</button>
+      <button class="ep-btn" onclick="selectEmoji(this,'😰')">😰</button>
+      <button class="ep-btn" onclick="selectEmoji(this,'😕')">😕</button>
+      <button class="ep-btn" onclick="selectEmoji(this,'🫠')">🫠</button>
+      <button class="ep-btn" onclick="selectEmoji(this,'💔')">💔</button>
+      <button class="ep-btn" onclick="selectEmoji(this,'🌪️')">🌪️</button>
+      <button class="ep-btn" onclick="selectEmoji(this,'🔥')">🔥</button>
+      <button class="ep-btn" onclick="selectEmoji(this,'🫶')">🫶</button>
+      <button class="ep-btn" onclick="selectEmoji(this,'✨')">✨</button>
+      <button class="ep-btn" onclick="selectEmoji(this,'🌊')">🌊</button>
+      <button class="ep-btn" onclick="selectEmoji(this,'🌙')">🌙</button>
+    </div>
+
+    <div class="spacer" style="height:10px"></div>
+    <div class="deposit-input-row">
+      <input class="deposit-input" id="deposit-input" type="text" placeholder="Scrivi un pensiero o una parola…" maxlength="80">
+      <button class="btn-primary" onclick="depositEmotion()" style="padding:11px 18px;border-radius:30px">+</button>
+    </div>
+
+    <div class="spacer" style="height:12px"></div>
+    <div class="section-label">La tua scatola</div>
+    <div class="deposit-area" id="deposit-area">
+      <div class="deposit-hint" id="deposit-hint">
+        <div class="dh-icon">📦</div>
+        Deposita il tuo primo<br>pensiero qui sopra
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="section-label">Guida al deposito</div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:8px">Come usare la scatola</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.7">
+        1️⃣ Scegli un'emoji che rappresenta come ti senti<br>
+        2️⃣ Scrivi una parola o un pensiero breve<br>
+        3️⃣ Premi + per depositarlo<br>
+        4️⃣ Tocca un elemento per rimuoverlo quando sei pronto<br><br>
+        <em style="color:var(--accent)">L'atto di "mettere fuori" l'emozione la rende meno travolgente.</em>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ── BOTTOM NAV ── -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="navigate('home',this)" id="nav-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      Casa
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="navigate('body',this)" id="nav-body">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="5" r="3"/>
+        <path d="M12 8v8M8 10l4 2 4-2M8 18l4-2 4 2"/>
+      </svg>
+      Corpo
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="navigate('meta',this)" id="nav-meta">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2zm0-10h2v8h-2z"/>
+      </svg>
+      Emozioni
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="navigate('reg',this)" id="nav-reg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 2"/>
+      </svg>
+      Respira
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="navigate('journal',this)" id="nav-journal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+      </svg>
+      Journal
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="navigate('box',this)" id="nav-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+      </svg>
+      Scatola
+      <div class="nav-dot"></div>
+    </button>
+  </nav>
+
+  <!-- ── MODAL (journal actions) ── -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="modal-title"></div>
+      <div class="card-sub" id="modal-prompt"></div>
+      <div class="spacer" style="height:8px"></div>
+      <textarea class="journal-textarea" id="modal-textarea" rows="6" placeholder="Scrivi qui…"></textarea>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn-primary" onclick="saveModalEntry()" style="flex:1">💾 Salva nel diario</button>
+        <button class="btn-secondary" onclick="closeModalDirect()">✕</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  DATA & STATE
+// ══════════════════════════════════════════
+const STATE = {
+  currentScreen: 'home',
+  selectedBodyArea: null,
+  selectedSensation: null,
+  selectedMeta: null,
+  selectedAvatar: null,
+  selectedEmoji: null,
+  selectedColor: null,
+  breathActive: false,
+  breathInterval: null,
+  currentTech: 'box',
+  currentJournalAction: null,
+  currentEmotion: null,
+};
+
+const DB_KEY = 'ondamia_data';
+
+function loadDB() {
+  try {
+    return JSON.parse(localStorage.getItem(DB_KEY)) || { entries: [], box: [], streakDays: 1, breathSessions: 0 };
+  } catch { return { entries: [], box: [], streakDays: 1, breathSessions: 0 }; }
+}
+
+function saveDB(db) {
+  localStorage.setItem(DB_KEY, JSON.stringify(db));
+}
+
+// ══════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════
+function navigate(screen, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+  if (btn) btn.classList.add('active');
+  STATE.currentScreen = screen;
+  if (screen === 'home') refreshHome();
+  if (screen === 'journal') refreshReframing();
+  if (screen === 'box') refreshBox();
+  if (screen === 'meta') refreshMeta();
+  if (screen === 'reg') resetBreathing();
+}
+
+function goToBreathing() {
+  navigate('reg', document.getElementById('nav-reg'));
+}
+function goToJournal() {
+  navigate('journal', document.getElementById('nav-journal'));
+}
+
+// ══════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════════════
+//  HOME
+// ══════════════════════════════════════════
+const TIPS = [
+  "Le emozioni sono come onde: non puoi fermarle, ma puoi imparare a surfarle. 🏄",
+  "Ogni emozione, anche la più difficile, porta un messaggio. Ascoltala.",
+  "Nomina quello che senti: dargli un nome riduce già il suo potere.",
+  "Respira. Anche solo 3 respiri profondi cambiano la chimica del tuo corpo.",
+  "La tristezza non è debolezza — è profondità. Accoglila.",
+  "La rabbia non è il nemico. È energia che vuole trasformarsi in qualcosa.",
+  "Oggi come ti senti? Non c'è risposta sbagliata.",
+  "Un'emozione non affrontata non sparisce: aspetta. Trovala prima tu.",
+];
+
+function refreshHome() {
+  const db = loadDB();
+  document.getElementById('streak-count').textContent = db.streakDays || 1;
+  document.getElementById('entries-count').textContent = db.entries.length;
+  document.getElementById('breath-sessions').textContent = db.breathSessions || 0;
+  document.getElementById('box-count').textContent = db.box.length;
+
+  const now = new Date();
+  document.getElementById('today-label').textContent =
+    now.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  const tipEl = document.getElementById('tip-text');
+  tipEl.textContent = TIPS[now.getDay() % TIPS.length];
+
+  const list = document.getElementById('recent-entries-list');
+  const recent = db.entries.slice(-5).reverse();
+  if (recent.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:0.82rem;">Nessuna voce ancora.<br>Inizia esplorando il tuo corpo 👇</div>';
+    return;
+  }
+  list.innerHTML = recent.map(e => `
+    <div class="entry-item">
+      <div class="entry-dot" style="background:${e.color||'var(--card2)'}">
+        ${e.emoji || '📝'}
+      </div>
+      <div class="entry-info">
+        <div class="entry-name">${e.emotion || e.text?.substring(0,30) || 'Voce'}</div>
+        <div class="entry-time">${new Date(e.ts).toLocaleString('it-IT',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'})}</div>
+      </div>
+      <div class="entry-tag">${e.type || 'generale'}</div>
+    </div>
+  `).join('');
+}
+
+function quickMood(el) {
+  document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  STATE.currentEmotion = el.dataset.mood;
+  showToast('Umore registrato! Esplora il journaling per approfondire 📝');
+  const db = loadDB();
+  db.entries.push({
+    ts: Date.now(), type: 'mood', emoji: el.querySelector('.emoji').textContent,
+    emotion: el.dataset.mood, text: '', color: ''
+  });
+  saveDB(db);
+  refreshHome();
+}
+
+// ══════════════════════════════════════════
+//  BODY MAP
+// ══════════════════════════════════════════
+const SENSATION_EMOTION_MAP = {
+  'testa-tensione':   { emoji:'😤', name:'Stress / Frustrazione', desc:'La tensione alla testa spesso accompagna lo stress o la frustrazione. Il tuo corpo ti sta dicendo: "troppo!" Prenditi un momento.' },
+  'testa-calore':     { emoji:'😠', name:'Rabbia', desc:'Il calore alla testa è spesso il segnale fisico della rabbia. È energia: puoi usarla per un cambiamento positivo.' },
+  'testa-peso':       { emoji:'😴', name:'Stanchezza mentale', desc:'Quel peso può essere stanchezza mentale. La mente ha bisogno di riposo, non solo il corpo.' },
+  'testa-nodo':       { emoji:'😰', name:'Ansia / Preoccupazione', desc:'Un blocco mentale spesso è ansia che cerca uscita. Stai portando qualcosa di troppo pesante da soli?' },
+  'testa-vuoto':      { emoji:'🫠', name:'Dissociazione / Distacco', desc:'Quella leggerezza può essere un modo per proteggersi. Sei al sicuro? Ancorati al momento presente.' },
+  'testa-formicolio': { emoji:'⚡', name:'Eccitazione / Euforia', desc:'Il formicolio alla testa accompagna l\'eccitazione! Hai qualcosa di bello che aspetti?' },
+
+  'gola-tensione':    { emoji:'😶', name:'Parole non dette', desc:'Qualcosa che vorresti dire ma non riesci? Il nodo alla gola è spesso emozioni non espresse.' },
+  'gola-calore':      { emoji:'😢', name:'Tristezza trattenuta', desc:'Il calore alla gola accompagna le lacrime trattenute. Va bene piangere.' },
+  'gola-peso':        { emoji:'😔', name:'Malinconia', desc:'Un peso dolceamaro. La malinconia è il ricordo di qualcosa di bello che è cambiato.' },
+  'gola-nodo':        { emoji:'😰', name:'Paura / Ansia', desc:'Il nodo alla gola classico dell\'ansia. Respira lentamente: l\'aria passa anche quando sembra bloccata.' },
+  'gola-vuoto':       { emoji:'🤐', name:'Silenzio emotivo', desc:'A volte non si hanno parole. Va bene anche questo: il silenzio è già una risposta.' },
+  'gola-formicolio':  { emoji:'🎤', name:'Voglia di esprimersi', desc:'Senti qualcosa che vuole uscire! Scrivi, canta, parla — lascialo fluire.' },
+
+  'petto-tensione':   { emoji:'💙', name:'Tristezza / Dolore emotivo', desc:'La tensione al petto è spesso tristezza profonda o dolore emotivo. Non devi portarlo da solo.' },
+  'petto-calore':     { emoji:'❤️', name:'Amore / Connessione', desc:'Il calore al petto è il segno dell\'amore — per qualcuno o qualcosa. È un dono.' },
+  'petto-peso':       { emoji:'😢', name:'Tristezza / Lutto', desc:'Quel peso al petto: stai elaborando una perdita? Di una persona, di una situazione, di come erano le cose.' },
+  'petto-nodo':       { emoji:'😰', name:'Ansia / Panico', desc:'Il nodo al petto è spesso ansia o attacco di panico. Respira lentamente: 4 secondi dentro, 6 fuori.' },
+  'petto-vuoto':      { emoji:'🕳️', name:'Vuoto affettivo / Solitudine', desc:'Quel vuoto può essere solitudine o bisogno di connessione. Sei degno di amore e presenza.' },
+  'petto-formicolio': { emoji:'🦋', name:'Emozione intensa / Entusiasmo', desc:'Il cuore che "batte" è energia emotiva intensa. Qualcosa ti tocca profondamente.' },
+
+  'stomaco-tensione': { emoji:'😬', name:'Ansia anticipatoria', desc:'Lo stomaco contratto è classico dell\'ansia da prestazione o attesa. Stai aspettando qualcosa di importante?' },
+  'stomaco-calore':   { emoji:'🔥', name:'Passione / Eccitazione', desc:'Il calore allo stomaco può essere passione o eccitazione. Cosa ti entusiasma?' },
+  'stomaco-peso':     { emoji:'😔', name:'Preoccupazione / Paura', desc:'Quel peso allo stomaco: c\'è qualcosa che ti spaventa o ti preoccupa molto.' },
+  'stomaco-nodo':     { emoji:'😨', name:'Paura / Terrore', desc:'Il nodo allo stomaco è paura. Cosa ti fa sentire in pericolo? La paura segnala qualcosa di importante.' },
+  'stomaco-vuoto':    { emoji:'🫙', name:'Fame emotiva / Bisogno', desc:'Un vuoto allo stomaco può essere anche "fame" di qualcosa: affetto, sicurezza, senso.' },
+  'stomaco-formicolio':{ emoji:'🦋', name:'Emozione positiva / Innamoramento', desc:'Le classiche "farfalle nello stomaco"! Qualcuno o qualcosa ti fa questo effetto?' },
+
+  'spalla-tensione':  { emoji:'😮‍💨', name:'Carico / Responsabilità', desc:'Le spalle portano i pesi. Stai portando troppe responsabilità? È ok chiedere aiuto.' },
+  'spalla-calore':    { emoji:'💪', name:'Forza / Determinazione', desc:'Il calore alle spalle può essere determinazione. Stai lottando per qualcosa in cui credi.' },
+  'spalla-peso':      { emoji:'😩', name:'Esaurimento / Burnout', desc:'Quel peso sulle spalle è il segnale del burnout. Il corpo chiede riposo e supporto.' },
+  'spalla-nodo':      { emoji:'😤', name:'Tensione cronica / Stress', desc:'Il nodo alle spalle è spesso stress cronico. Quando hai fatto l\'ultima volta qualcosa solo per te?' },
+  'spalla-vuoto':     { emoji:'😶', name:'Rassegnazione', desc:'Spalle abbassate: a volte è rassegnazione. Ma la rassegnazione può diventare accettazione saggia.' },
+  'spalla-formicolio':{ emoji:'⚡', name:'Energia / Adrenalina', desc:'Formicola l\'adrenalina! Il corpo si sta preparando per qualcosa.' },
+
+  'braccia-tensione': { emoji:'😤', name:'Rabbia trattenuta', desc:'Braccia contratte: stai trattenendo una reazione? La rabbia vuole movimento.' },
+  'braccia-calore':   { emoji:'🤗', name:'Voglia di abbracciare', desc:'Il calore nelle braccia è spesso voglia di contatto fisico, di abbracciare o essere abbracciati.' },
+  'braccia-peso':     { emoji:'😴', name:'Stanchezza fisica ed emotiva', desc:'Braccia pesanti: il corpo dice che ha bisogno di riposo profondo.' },
+  'braccia-nodo':     { emoji:'😰', name:'Blocco', desc:'Senti le braccia "bloccate"? A volte è la sensazione di non sapere come agire.' },
+  'braccia-vuoto':    { emoji:'🫂', name:'Solitudine / Bisogno di contatto', desc:'Braccia vuote: è il bisogno di connessione fisica e umana. Sei meno solo di quanto pensi.' },
+  'braccia-formicolio':{ emoji:'⚡', name:'Energia', desc:'Energia nelle braccia: voglia di fare, creare, costruire!' },
+
+  'pancia-tensione':  { emoji:'😬', name:'Ansia di fondo', desc:'La tensione all\'addome è spesso ansia "di fondo", quella che non sai bene perché c\'è.' },
+  'pancia-calore':    { emoji:'🔥', name:'Emozione intensa', desc:'Calore all\'addome: emozione viscerale, istintiva. Il corpo sa prima della mente.' },
+  'pancia-peso':      { emoji:'😩', name:'Stanchezza profonda', desc:'Pesantezza all\'addome: stanchezza profonda che va oltre il fisico.' },
+  'pancia-nodo':      { emoji:'😨', name:'Paura profonda', desc:'Il nodo all\'addome è paura viscerale. Cosa ti spaventa nel profondo?' },
+  'pancia-vuoto':     { emoji:'🫙', name:'Vuoto esistenziale', desc:'Un senso di vuoto: a volte è la domanda "chi sono io?" in cerca di risposta.' },
+  'pancia-formicolio':{ emoji:'🦋', name:'Intuizione / Sensazione viscerale', desc:'Il tuo "sesto senso" parla. Stai percependo qualcosa di importante in modo istintivo.' },
+
+  'gambe-tensione':   { emoji:'🏃', name:'Voglia di fuggire / Impazienza', desc:'Gambe contratte: l\'istinto di "correre". Stai in una situazione da cui vorresti scappare?' },
+  'gambe-calore':     { emoji:'🔥', name:'Agitazione / Inquietudine', desc:'Il calore nelle gambe è spesso agitazione. Il corpo vuole muoversi.' },
+  'gambe-peso':       { emoji:'😩', name:'Stanchezza profonda / Depressione', desc:'Gambe pesantissime: un segno di stanchezza profonda. Dai al tuo corpo il riposo che merita.' },
+  'gambe-nodo':       { emoji:'😰', name:'Blocco / Paralisi emotiva', desc:'Gambe "paralizzate": è la sensazione di non sapere come andare avanti.' },
+  'gambe-vuoto':      { emoji:'🌫️', name:'Disconnessione', desc:'Gambe che non senti: a volte il corpo si "spegne" per proteggersi da emozioni eccessive.' },
+  'gambe-formicolio': { emoji:'⚡', name:'Energia / Voglia di agire', desc:'Gambe che vibrano: energia e voglia di muoversi, andare, esplorare!' },
+};
+
+let selectedBodyAreaId = null;
+
+function selectBodyArea(areaId, areaLabel, emoji, hint) {
+  selectedBodyAreaId = areaId;
+  STATE.selectedBodyArea = areaId;
+  STATE.selectedSensation = null;
+
+  document.querySelectorAll('.body-area-hit').forEach(a => a.classList.remove('active'));
+  const areaEl = document.getElementById('area-' + areaId.split('-')[0]) ||
+    document.querySelector('[id^="area-"]');
+  // highlight all matching areas
+  document.querySelectorAll('.body-area-hit').forEach(a => {
+    if (a.id.includes(areaId.split('-')[0].substring(0,4))) a.classList.add('active');
+  });
+
+  document.getElementById('area-name-label').textContent = areaLabel;
+  document.getElementById('sensation-section').style.display = 'block';
+  document.getElementById('emotion-result').classList.remove('show');
+  document.querySelectorAll('.sensation-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('sensation-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function selectSensation(sensation, emoji, desc) {
+  STATE.selectedSensation = sensation;
+  document.querySelectorAll('.sensation-btn').forEach(b => b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+
+  const key = `${STATE.selectedBodyArea}-${sensation}`;
+  const emotion = SENSATION_EMOTION_MAP[key] || {
+    emoji: '💭', name: 'Emozione complessa',
+    desc: 'Quello che senti è reale e valido. A volte le emozioni non hanno un nome preciso, e va benissimo così.'
+  };
+
+  STATE.currentEmotion = emotion.name;
+  document.getElementById('em-emoji').textContent = emotion.emoji;
+  document.getElementById('em-name').textContent = emotion.name;
+  document.getElementById('em-desc').textContent = emotion.desc;
+  document.getElementById('emotion-result').classList.add('show');
+  document.getElementById('emotion-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function saveFromBody() {
+  if (!STATE.selectedBodyArea || !STATE.selectedSensation) return;
+  const key = `${STATE.selectedBodyArea}-${STATE.selectedSensation}`;
+  const emotion = SENSATION_EMOTION_MAP[key] || { emoji:'💭', name:'Emozione', desc:'' };
+  const db = loadDB();
+  db.entries.push({
+    ts: Date.now(), type: 'corpo',
+    emoji: emotion.emoji, emotion: emotion.name,
+    area: STATE.selectedBodyArea, sensation: STATE.selectedSensation,
+    text: '', color: ''
+  });
+  saveDB(db);
+  showToast('✅ Salvato nel tuo diario!');
+  refreshReframing();
+}
+
+// ══════════════════════════════════════════
+//  META-EMOZIONI
+// ══════════════════════════════════════════
+const META_EMOTIONS = [
+  { emoji:'🌧️', name:'Malinconia', story:'Come pioggia leggera su un pomeriggio di domenica. Non è tristezza, è il sapore dolceamaro del tempo che passa.' },
+  { emoji:'🌋', name:'Frustrazione', story:'Come lava che non trova sfogo. Un\'energia bloccata che cerca un canale. Cosa ti sta impedendo di esprimerti?' },
+  { emoji:'🌈', name:'Euforia', story:'Tutto sembra possibile. Il colore è ovunque. Ma occhio: l\'euforia a volte nasconde anche ansia da prestazione.' },
+  { emoji:'🌫️', name:'Confusione', story:'Come nebbia fitta: non vedi la strada. Ma la nebbia non dura: aspetta, e il paesaggio tornerà.' },
+  { emoji:'🪨', name:'Rassegnazione', story:'Come una pietra che affonda lentamente. Hai smesso di lottare. A volte è saggezza; a volte è un segnale d\'aiuto.' },
+  { emoji:'🦋', name:'Trepidazione', story:'Qualcosa di bello e spaventoso allo stesso tempo. Il futuro che bussa. Eccitazione mista a paura.' },
+  { emoji:'🌙', name:'Nostalgia', story:'Il dolce dolore di ciò che è stato. Non sei bloccato nel passato: stai onorando qualcosa di importante.' },
+  { emoji:'⚡', name:'Irrequietezza', story:'Un\' energia che non trova posto. Le gambe vogliono correre, la testa vuole fermarsi. Conflitto interno.' },
+  { emoji:'🌊', name:'Sopraffazione', story:'Come un\'onda troppo grande. Troppe cose insieme. Respira: le onde passano sempre.' },
+  { emoji:'🌸', name:'Tenerezza', story:'Un momento di apertura e dolcezza. Il cuore si ammorbidisce. Lasciala essere.' },
+  { emoji:'🔒', name:'Chiusura', story:'Come una porta chiusa a chiave. Non vuoi entrare, non vuoi uscire. Cosa stai proteggendo?' },
+  { emoji:'✨', name:'Meraviglia', story:'Qualcosa di piccolo o grande ti ha colpito. Gli occhi si sono aperti. La vita ha ancora sorprese.' },
+];
+
+function refreshMeta() {
+  const grid = document.getElementById('meta-grid');
+  grid.innerHTML = META_EMOTIONS.map((e, i) => `
+    <div class="meta-card" onclick="selectMeta(${i})">
+      <div class="mc-emoji">${e.emoji}</div>
+      <div class="mc-name">${e.name}</div>
+      <div class="mc-story">${e.story.substring(0,60)}…</div>
+    </div>
+  `).join('');
+}
+
+function selectAvatar(btn, emoji, name) {
+  document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  STATE.selectedAvatar = { emoji, name };
+}
+
+function selectMeta(index) {
+  document.querySelectorAll('.meta-card').forEach((c,i) => {
+    c.classList.toggle('selected', i === index);
+  });
+  const em = META_EMOTIONS[index];
+  STATE.selectedMeta = em;
+  STATE.currentEmotion = em.name;
+
+  const storySection = document.getElementById('meta-story-section');
+  const storyCard = document.getElementById('meta-story-card');
+  storySection.style.display = 'block';
+  storyCard.style.display = 'block';
+  document.getElementById('meta-story-title').textContent = `${em.emoji} ${em.name}`;
+  document.getElementById('meta-story-text').textContent = em.story;
+  storyCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function saveMetaEmotion() {
+  if (!STATE.selectedMeta) return;
+  const db = loadDB();
+  db.entries.push({
+    ts: Date.now(), type: 'meta',
+    emoji: STATE.selectedMeta.emoji,
+    emotion: STATE.selectedMeta.name,
+    text: STATE.selectedMeta.story.substring(0,80),
+    color: '', avatar: STATE.selectedAvatar
+  });
+  saveDB(db);
+  showToast('✅ Meta-emozione salvata!');
+  refreshHome();
+}
+
+// ══════════════════════════════════════════
+//  BREATHING / REGOLAZIONE
+// ══════════════════════════════════════════
+const TECHNIQUES = {
+  box: {
+    name: 'Respirazione Box (4-4-4-4)',
+    phases: [
+      { label: 'Inspira', duration: 4, class: 'inhale' },
+      { label: 'Tieni', duration: 4, class: 'hold' },
+      { label: 'Espira', duration: 4, class: 'exhale' },
+      { label: 'Tieni', duration: 4, class: 'hold' },
+    ],
+    cycles: 4,
+    desc: `<h3>📦 Box Breathing</h3><p>Usata dai Navy SEAL e dai terapisti per calmare il sistema nervoso autonomo in pochi minuti.</p><ul><li>Inspira per 4 secondi</li><li>Tieni per 4 secondi</li><li>Espira per 4 secondi</li><li>Tieni per 4 secondi</li></ul><p style="margin-top:10px"><em>Ideale per: ansia acuta, stress prima di un esame, picchi di rabbia.</em></p>`
+  },
+  '478': {
+    name: 'Tecnica 4-7-8',
+    phases: [
+      { label: 'Inspira', duration: 4, class: 'inhale' },
+      { label: 'Tieni', duration: 7, class: 'hold' },
+      { label: 'Espira', duration: 8, class: 'exhale' },
+    ],
+    cycles: 4,
+    desc: `<h3>😴 Tecnica 4-7-8</h3><p>Sviluppata dal Dr. Andrew Weil, attiva il sistema parasimpatico. Ottima per addormentarsi o calmare l\'ansia.</p><ul><li>Inspira per 4 secondi</li><li>Tieni il respiro per 7 secondi</li><li>Espira lentamente per 8 secondi</li></ul><p style="margin-top:10px"><em>Ideale per: difficoltà ad addormentarsi, ansia diffusa.</em></p>`
+  },
+  coerenza: {
+    name: 'Coerenza Cardiaca (5-5)',
+    phases: [
+      { label: 'Inspira', duration: 5, class: 'inhale' },
+      { label: 'Espira', duration: 5, class: 'exhale' },
+    ],
+    cycles: 6,
+    desc: `<h3>❤️ Coerenza Cardiaca</h3><p>6 respiri al minuto per 5 minuti. Sincronizza il ritmo cardiaco e calma il cortisolo. Praticata 3 volte al giorno cambia la biologia dello stress.</p><ul><li>Inspira per 5 secondi</li><li>Espira per 5 secondi</li><li>Ripeti per 5 minuti</li></ul><p style="margin-top:10px"><em>Ideale per: stress cronico, regolazione quotidiana.</em></p>`
+  },
+  '5-4-3': {
+    name: 'Grounding 5-4-3-2-1',
+    phases: [
+      { label: 'Inspira', duration: 4, class: 'inhale' },
+      { label: 'Espira', duration: 6, class: 'exhale' },
+    ],
+    cycles: 5,
+    desc: `<h3>🌿 Grounding Sensoriale</h3><p>Porta l\'attenzione ai 5 sensi per uscire dalla testa e tornare al corpo. Efficace in caso di dissociazione o panico.</p><ol><li><strong>5 cose</strong> che vedi</li><li><strong>4 oggetti</strong> che tocchi</li><li><strong>3 suoni</strong> che senti</li><li><strong>2 profumi</strong></li><li><strong>1 sapore</strong></li></ol><p style="margin-top:10px"><em>Ideale per: attacchi di panico, dissociazione, pensieri intrusivi.</em></p>`
+  }
+};
+
+let breathPhaseIndex = 0, breathCycleCount = 0, breathTimer = null, breathPhaseTimer = null;
+
+function selectTech(btn, tech) {
+  document.querySelectorAll('.tech-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  STATE.currentTech = tech;
+  stopBreathing();
+  document.getElementById('tech-description').innerHTML = TECHNIQUES[tech].desc;
+}
+
+function resetBreathing() {
+  stopBreathing();
+  STATE.currentTech = 'box';
+  document.querySelectorAll('.tech-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  document.getElementById('tech-description').innerHTML = TECHNIQUES['box'].desc;
+  const circle = document.getElementById('breath-circle');
+  circle.className = 'breath-circle';
+  circle.textContent = 'Tocca\nper iniziare';
+  document.getElementById('breath-phase-label').textContent = '';
+  document.getElementById('breath-count-label').textContent = '';
+  document.getElementById('breath-bar').style.width = '0%';
+}
+
+function startBreathing() {
+  if (STATE.breathActive) return;
+  STATE.breathActive = true;
+  breathPhaseIndex = 0;
+  breathCycleCount = 0;
+  document.getElementById('breath-start-btn').style.display = 'none';
+  document.getElementById('breath-stop-btn').style.display = 'inline-flex';
+  runBreathPhase();
+}
+
+function runBreathPhase() {
+  if (!STATE.breathActive) return;
+  const tech = TECHNIQUES[STATE.currentTech];
+  if (breathCycleCount >= tech.cycles) {
+    stopBreathing();
+    document.getElementById('breath-phase-label').textContent = '✅ Ottimo lavoro!';
+    document.getElementById('breath-count-label').textContent = `${tech.cycles} cicli completati`;
+    document.getElementById('breath-bar').style.width = '100%';
+    saveBreathSession();
+    return;
+  }
+  const phase = tech.phases[breathPhaseIndex];
+  const circle = document.getElementById('breath-circle');
+  circle.className = 'breath-circle ' + phase.class;
+  circle.textContent = phase.label;
+  document.getElementById('breath-phase-label').textContent = `${phase.label}… ${phase.duration}s`;
+
+  const totalPhases = tech.phases.length * tech.cycles;
+  const doneSoFar = breathCycleCount * tech.phases.length + breathPhaseIndex;
+  document.getElementById('breath-bar').style.width = (doneSoFar / totalPhases * 100) + '%';
+  document.getElementById('breath-count-label').textContent = `Ciclo ${breathCycleCount+1} di ${tech.cycles}`;
+
+  // countdown
+  let remaining = phase.duration;
+  if (breathTimer) clearInterval(breathTimer);
+  breathTimer = setInterval(() => {
+    remaining--;
+    document.getElementById('breath-phase-label').textContent = `${phase.label}… ${remaining}s`;
+    if (remaining <= 0) clearInterval(breathTimer);
+  }, 1000);
+
+  breathPhaseTimer = setTimeout(() => {
+    if (!STATE.breathActive) return;
+    breathPhaseIndex++;
+    if (breathPhaseIndex >= tech.phases.length) {
+      breathPhaseIndex = 0;
+      breathCycleCount++;
+    }
+    runBreathPhase();
+  }, phase.duration * 1000);
+}
+
+function stopBreathing() {
+  STATE.breathActive = false;
+  clearTimeout(breathPhaseTimer);
+  clearInterval(breathTimer);
+  document.getElementById('breath-start-btn').style.display = 'inline-flex';
+  document.getElementById('breath-stop-btn').style.display = 'none';
+  const circle = document.getElementById('breath-circle');
+  circle.className = 'breath-circle';
+  circle.textContent = 'Tocca\nper iniziare';
+  document.getElementById('breath-phase-label').textContent = '';
+}
+
+function saveBreathSession() {
+  const db = loadDB();
+  db.breathSessions = (db.breathSessions || 0) + 1;
+  db.entries.push({ ts: Date.now(), type: 'respiro', emoji: '🌊', emotion: 'Sessione di respiro', text: TECHNIQUES[STATE.currentTech].name, color: '' });
+  saveDB(db);
+  showToast('🌊 Sessione salvata!');
+  refreshHome();
+}
+
+// ══════════════════════════════════════════
+//  JOURNALING
+// ══════════════════════════════════════════
+const JOURNAL_PROMPTS = {
+  canzone: {
+    title: '🎵 Scrivi una canzone',
+    prompt: 'Non deve essere perfetta. Anche solo un ritornello. Il ritmo libera quello che le parole non riescono a dire. Inizia con: "Oggi sento che…"'
+  },
+  colore: {
+    title: '🎨 Colora il tuo umore',
+    prompt: 'Descrivi il tuo stato d\'animo come se fosse un paesaggio colorato. Che colori ci sono? È luminoso o scuro? Fermo o in movimento?'
+  },
+  lettera: {
+    title: '✉️ Scrivi una lettera',
+    prompt: 'Scrivi a te stesso tra 5 anni. Cosa vorresti che il futuro-te sapesse di questo momento? Cosa vorresti dirgli?'
+  },
+  foto: {
+    title: '📸 La foto del momento',
+    prompt: 'Se potessi scattare una foto che rappresenta come ti senti ora, cosa inquadreresti? Descrivi l\'immagine nei dettagli.'
+  },
+};
+
+const REFRAMING_QUESTIONS = {
+  'rabbia': [
+    { tag: '🔥 Energia', q: 'La rabbia è energia. Se la trasformassi in un\'azione concreta, cosa faresti?' },
+    { tag: '💡 Confine', q: 'Cosa ti sta dicendo questa rabbia su ciò che per te è importante o ingiusto?' },
+    { tag: '🎯 Azione', q: 'C\'è qualcosa che puoi cambiare in questa situazione? Anche una piccola cosa?' },
+  ],
+  'tristezza': [
+    { tag: '🌧️ Riflessione', q: 'La tristezza spesso indica che qualcosa era importante per te. Cosa hai perso o cosa desideri?' },
+    { tag: '💙 Cura', q: 'Come tratteresti un amico che si sente così? Puoi trattare te stesso allo stesso modo?' },
+    { tag: '🌱 Crescita', q: 'C\'è qualcosa che questa tristezza ti sta insegnando su di te?' },
+  ],
+  'ansia': [
+    { tag: '🎯 Focus', q: 'Di tutte le cose che ti preoccupano, quale è realmente sotto il tuo controllo?' },
+    { tag: '⏰ Presente', q: 'In questo preciso momento, sei al sicuro? Cosa senti con i tuoi sensi adesso?' },
+    { tag: '🌊 Onda', q: 'L\'ansia è un\'onda: sale, raggiunge il picco, scende. Hai già superato onde simili?' },
+  ],
+  'default': [
+    { tag: '🔍 Esplora', q: 'Se questa emozione potesse parlare, cosa direbbe?' },
+    { tag: '🌊 Surf', q: 'Invece di combatterla, puoi stare con questa emozione per 60 secondi, osservarla senza giudicarla?' },
+    { tag: '💡 Messaggio', q: 'Cosa sta cercando di proteggerti o dirti questa emozione?' },
+  ],
+};
+
+function refreshReframing() {
+  const emotion = (STATE.currentEmotion || '').toLowerCase();
+  let questions = REFRAMING_QUESTIONS.default;
+  if (emotion.includes('rabb') || emotion.includes('frustr')) questions = REFRAMING_QUESTIONS['rabbia'];
+  else if (emotion.includes('trist') || emotion.includes('malinconi')) questions = REFRAMING_QUESTIONS['tristezza'];
+  else if (emotion.includes('ansia') || emotion.includes('paura') || emotion.includes('panico')) questions = REFRAMING_QUESTIONS['ansia'];
+
+  const list = document.getElementById('reframing-list');
+  list.innerHTML = questions.map(q => `
+    <div class="reframing-q" onclick="useReframingQ(this, '${q.q.replace(/'/g,"\\'")}')">
+      <span class="rq-tag">${q.tag}</span><br>
+      ${q.q}
+    </div>
+  `).join('');
+}
+
+function useReframingQ(el, q) {
+  const ta = document.getElementById('free-journal');
+  ta.value = q + '\n\n';
+  ta.focus();
+  ta.scrollIntoView({ behavior: 'smooth' });
+}
+
+function openJournalAction(action) {
+  STATE.currentJournalAction = action;
+  const cfg = JOURNAL_PROMPTS[action];
+  document.getElementById('modal-title').textContent = cfg.title;
+  document.getElementById('modal-prompt').textContent = cfg.prompt;
+  document.getElementById('modal-textarea').value = '';
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+function saveModalEntry() {
+  const text = document.getElementById('modal-textarea').value.trim();
+  if (!text) { showToast('Scrivi qualcosa prima di salvare!'); return; }
+  const db = loadDB();
+  const cfg = JOURNAL_PROMPTS[STATE.currentJournalAction] || {};
+  db.entries.push({
+    ts: Date.now(), type: 'journal',
+    emoji: cfg.title?.split(' ')[0] || '📝',
+    emotion: cfg.title || 'Journaling',
+    text: text.substring(0,200), color: ''
+  });
+  saveDB(db);
+  closeModalDirect();
+  showToast('📝 Voce di diario salvata!');
+  refreshHome();
+}
+
+function saveJournalEntry() {
+  const text = document.getElementById('free-journal').value.trim();
+  const color = STATE.selectedColor || '';
+  if (!text && !color) { showToast('Scrivi qualcosa o scegli un colore!'); return; }
+  const db = loadDB();
+  db.entries.push({
+    ts: Date.now(), type: 'journal',
+    emoji: '📝', emotion: 'Voce libera',
+    text: text.substring(0,300), color: ''
+  });
+  saveDB(db);
+  document.getElementById('free-journal').value = '';
+  showToast('💾 Salvato!');
+  refreshHome();
+}
+
+function selectColor(el, meaning) {
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  STATE.selectedColor = meaning;
+  document.getElementById('color-meaning').textContent = meaning;
+}
+
+// ══════════════════════════════════════════
+//  SCATOLA EMOZIONI
+// ══════════════════════════════════════════
+function selectEmoji(btn, emoji) {
+  document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  STATE.selectedEmoji = emoji;
+}
+
+function depositEmotion() {
+  const input = document.getElementById('deposit-input');
+  const text = input.value.trim();
+  const emoji = STATE.selectedEmoji || '💭';
+  if (!text && !STATE.selectedEmoji) { showToast('Scegli un\'emoji o scrivi qualcosa!'); return; }
+
+  const db = loadDB();
+  const item = { ts: Date.now(), emoji, text: text || '', id: Date.now() };
+  db.box.push(item);
+  saveDB(db);
+  input.value = '';
+  STATE.selectedEmoji = null;
+  document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('selected'));
+
+  renderBoxItem(item);
+  document.getElementById('deposit-hint').style.display = 'none';
+  refreshHome();
+  showToast('📦 Depositato nella scatola!');
+}
+
+function renderBoxItem(item) {
+  const area = document.getElementById('deposit-area');
+  const div = document.createElement('div');
+  div.className = 'deposited-item';
+  div.dataset.id = item.id;
+  const time = new Date(item.ts).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+  div.innerHTML = `<span>${item.emoji}</span>${item.text ? `<span>${item.text}</span>` : ''}<span class="di-time">${time}</span>`;
+  div.onclick = () => removeBoxItem(item.id, div);
+  area.appendChild(div);
+}
+
+function removeBoxItem(id, el) {
+  if (!confirm('Rimuovere questo elemento dalla scatola?')) return;
+  const db = loadDB();
+  db.box = db.box.filter(i => i.id !== id);
+  saveDB(db);
+  el.remove();
+  refreshHome();
+  if (document.querySelectorAll('.deposited-item').length === 0) {
+    document.getElementById('deposit-hint').style.display = 'block';
+  }
+}
+
+function refreshBox() {
+  const db = loadDB();
+  const area = document.getElementById('deposit-area');
+  // Remove old items (keep hint)
+  document.querySelectorAll('.deposited-item').forEach(el => el.remove());
+  if (db.box.length === 0) {
+    document.getElementById('deposit-hint').style.display = 'block';
+  } else {
+    document.getElementById('deposit-hint').style.display = 'none';
+    db.box.forEach(item => renderBoxItem(item));
+  }
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+function init() {
+  refreshHome();
+  refreshReframing();
+  refreshMeta();
+  refreshBox();
+  resetBreathing();
+  document.getElementById('tech-description').innerHTML = TECHNIQUES['box'].desc;
+
+  // streak update
+  const db = loadDB();
+  const lastDate = localStorage.getItem('ondamia_last_date');
+  const today = new Date().toDateString();
+  if (lastDate !== today) {
+    if (lastDate) {
+      const diff = (new Date(today) - new Date(lastDate)) / 86400000;
+      if (diff <= 2) db.streakDays = (db.streakDays || 1) + 1;
+      else db.streakDays = 1;
+    }
+    localStorage.setItem('ondamia_last_date', today);
+    saveDB(db);
+  }
+
+  // manifest.json è esterno (vedi /manifest.json)
+}
+
+window.addEventListener('DOMContentLoaded', init);
+
+// Service Worker registration
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    console.log('[OndaMia] SW registrato:', reg.scope);
+  }).catch(err => console.warn('[OndaMia] SW errore:', err));
+}
+</script>
+</body>
+</html>

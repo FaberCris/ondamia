@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OndaMia — Offline</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100dvh;
+    background: #0e0b20;
+    color: #e2e0f0;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+    gap: 20px;
+  }
+  .wave { font-size: 4rem; animation: float 3s ease-in-out infinite; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  h1 { font-size: 1.6rem; color: #c084fc; }
+  p { font-size: 0.9rem; color: #8b87b0; line-height: 1.7; max-width: 300px; }
+  .tip {
+    background: rgba(192,132,252,0.08);
+    border: 1px solid rgba(192,132,252,0.2);
+    border-radius: 16px;
+    padding: 16px 20px;
+    font-size: 0.85rem;
+    color: #c084fc;
+    font-style: italic;
+    max-width: 320px;
+    line-height: 1.6;
+  }
+  button {
+    background: linear-gradient(135deg, #c084fc, #818cf8);
+    border: none;
+    border-radius: 30px;
+    color: white;
+    padding: 12px 28px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+  <div class="wave">🌊</div>
+  <h1>Sei offline</h1>
+  <p>Non riesci a connetterti? Va bene così. OndaMia funziona anche senza internet.</p>
+  <div class="tip">
+    "Le emozioni sono come onde: non puoi fermarle, ma puoi imparare a surfarle."
+  </div>
+  <p>Ricarica quando sei di nuovo connesso, o torna all'app:</p>
+  <button onclick="window.location.href='/'">Torna a OndaMia</button>
+</body>
+</html>
