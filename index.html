@@ -1364,7 +1364,6 @@
       </div>
       <button class="btn-secondary" onclick="clearDiary()" style="font-size:0.7rem;padding:6px 12px">🗑️ Svuota</button>
     </div>
-
     <div style="padding:0 16px 8px">
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px" id="diary-filter-row">
         <button class="tech-tab active" onclick="filterDiary(this,'all')">Tutte</button>
@@ -2149,6 +2148,7 @@ function renderDiary() {
 
   const list = document.getElementById('diary-list');
   const empty = document.getElementById('diary-empty');
+  if (!list) return;
 
   if (entries.length === 0) {
     list.innerHTML = '';
@@ -2157,30 +2157,33 @@ function renderDiary() {
   }
   empty.style.display = 'none';
 
-  list.innerHTML = entries.map((e, i) => {
-    const date = new Date(e.ts).toLocaleString('it-IT', {
-      weekday:'short', day:'numeric', month:'short',
-      hour:'2-digit', minute:'2-digit'
-    });
-    const typeLabel = {
-      corpo:'🫀 Corpo', meta:'💫 Meta-emozione', journal:'📝 Journal',
-      respiro:'🌊 Respiro', mood:'😊 Mood rapido'
-    }[e.type] || '📌 Nota';
+  const typeLabels = {
+    corpo: '🫀 Corpo', meta: '💫 Meta-emozione',
+    journal: '📝 Journal', respiro: '🌊 Respiro', mood: '😊 Mood rapido'
+  };
 
-    return \`<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start">
-      <div style="font-size:1.8rem;flex-shrink:0">\${e.emoji || '📝'}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:0.7rem;color:var(--accent);margin-bottom:3px">\${typeLabel}</div>
-        <div style="font-size:0.9rem;font-weight:500;margin-bottom:4px">\${e.emotion || 'Voce'}</div>
-        \${e.text ? \`<div style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical">\${e.text}</div>\` : ''}
-        <div style="font-size:0.65rem;color:var(--text-muted);margin-top:6px">🕐 \${date}</div>
-      </div>
-    </div>\`;
+  list.innerHTML = entries.map(function(e) {
+    const date = new Date(e.ts).toLocaleString('it-IT', {
+      weekday: 'short', day: 'numeric', month: 'short',
+      hour: '2-digit', minute: '2-digit'
+    });
+    const typeLabel = typeLabels[e.type] || '📌 Nota';
+    const textHtml = e.text
+      ? '<div style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;margin-top:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical">' + e.text + '</div>'
+      : '';
+    return '<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start">'
+      + '<div style="font-size:1.8rem;flex-shrink:0">' + (e.emoji || '📝') + '</div>'
+      + '<div style="flex:1;min-width:0">'
+      + '<div style="font-size:0.7rem;color:var(--accent);margin-bottom:3px">' + typeLabel + '</div>'
+      + '<div style="font-size:0.9rem;font-weight:500;margin-bottom:2px">' + (e.emotion || 'Voce') + '</div>'
+      + textHtml
+      + '<div style="font-size:0.65rem;color:var(--text-muted);margin-top:6px">🕐 ' + date + '</div>'
+      + '</div></div>';
   }).join('');
 }
 
 function clearDiary() {
-  if (!confirm('Sei sicuro di voler cancellare tutte le voci del diario? Non è reversibile.')) return;
+  if (!confirm('Sei sicuro di voler cancellare tutte le voci? Non è reversibile.')) return;
   const db = loadDB();
   db.entries = [];
   saveDB(db);
