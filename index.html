@@ -201,8 +201,10 @@
     display: flex;
     gap: 10px;
     overflow-x: auto;
-    padding: 0 16px 4px;
+    padding: 8px 16px 12px;
     scrollbar-width: none;
+    min-height: 90px;
+    align-items: center;
   }
   .mood-row::-webkit-scrollbar { display: none; }
   .mood-chip {
@@ -210,6 +212,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 5px;
     background: var(--card);
     border: 1px solid var(--border);
@@ -217,7 +220,8 @@
     padding: 10px 12px;
     cursor: pointer;
     transition: all var(--transition);
-    min-width: 64px;
+    min-width: 68px;
+    min-height: 72px;
     font-size: 0.65rem;
     color: var(--text-muted);
   }
@@ -227,7 +231,8 @@
     color: var(--accent);
     transform: translateY(-2px);
   }
-  .mood-chip .emoji { font-size: 1.6rem; }
+  .mood-chip .emoji { font-size: 1.8rem; display: block; line-height: 1.2; font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+  .emoji, [class*="emoji"], .ep-btn, .mood-chip .emoji { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
 
   /* recent entries */
   .entry-item {
@@ -749,22 +754,26 @@
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    padding: 0 16px 4px;
+    padding: 8px 16px 12px;
     scrollbar-width: none;
+    min-height: 64px;
+    align-items: center;
   }
   .emoji-picker::-webkit-scrollbar { display: none; }
   .ep-btn {
     flex-shrink: 0;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 10px;
-    width: 44px; height: 44px;
+    width: 48px; height: 48px;
     cursor: pointer;
     transition: all var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
+    line-height: 1;
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
   }
   .ep-btn:hover { border-color: var(--accent); transform: scale(1.1); }
   .ep-btn.selected { border-color: var(--accent); background: var(--card2); }
