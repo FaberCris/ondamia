@@ -9,12 +9,11 @@ const OFFLINE_URL = '/offline.html';
 
 // Risorse da cachare all'installazione
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/offline.html',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
+  './index.html',
+  './offline.html',
+  './manifest.json',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
   // Google Fonts (se disponibili)
   'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap'
 ];
@@ -116,7 +115,7 @@ self.addEventListener('push', event => {
   const data = event.data.json();
   self.registration.showNotification(data.title || 'OndaMia', {
     body: data.body || 'Come stai oggi?',
-    icon: '/icons/icon-192.png',
+    icon: './icons/icon-192.png',
     badge: '/icons/icon-96.png',
     tag: 'ondamia-reminder',
     data: { url: data.url || '/' }
