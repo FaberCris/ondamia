@@ -898,6 +898,140 @@
   .css-part { transition: all 0.2s ease; }
   .css-part:hover { border-color: #f0abfc !important; background: linear-gradient(135deg,#3d3460,#2e2848) !important; box-shadow: 0 0 12px rgba(192,132,252,0.4); }
   .css-part.active { border-color: #f0abfc !important; background: linear-gradient(135deg,#4a3d70,#362f58) !important; box-shadow: 0 0 16px rgba(192,132,252,0.6); }
+
+  /* ── ONBOARDING ── */
+  .onboard-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,8,25,0.97);
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    gap: 0;
+  }
+  .onboard-overlay.hidden { display: none; }
+
+  .onboard-slide {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    max-width: 340px;
+    width: 100%;
+    animation: fade-in-up 0.4s ease;
+  }
+  .onboard-slide.active { display: flex; }
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .onboard-icon { font-size: 3.5rem; }
+  .onboard-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+  .onboard-text {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+  .onboard-highlight {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 0.82rem;
+    color: var(--text);
+    line-height: 1.6;
+    width: 100%;
+  }
+  .onboard-highlight strong { color: var(--accent); }
+  .onboard-dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 4px;
+  }
+  .onboard-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.3s;
+  }
+  .onboard-dot.active { background: var(--accent); width: 22px; border-radius: 4px; }
+  .onboard-nav {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    width: 100%;
+    justify-content: center;
+  }
+  .onboard-arrow {
+    position: absolute;
+    background: rgba(192,132,252,0.15);
+    border: 2px dashed var(--accent);
+    border-radius: 12px;
+    padding: 8px 14px;
+    font-size: 0.78rem;
+    color: var(--accent);
+    pointer-events: none;
+    animation: pulse-arrow 1.5s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  @keyframes pulse-arrow {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.04); }
+  }
+
+  /* ── GDPR BANNER ── */
+  .gdpr-banner {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--card2);
+    border-top: 1px solid var(--border);
+    padding: 16px 20px 32px;
+    z-index: 400;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .gdpr-banner.hidden { display: none; }
+  .gdpr-title { font-size: 0.9rem; font-weight: 600; }
+  .gdpr-text { font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; }
+  .gdpr-btns { display: flex; gap: 8px; }
+  .gdpr-link { font-size: 0.72rem; color: var(--accent); text-decoration: underline; cursor: pointer; }
+
+  /* ── ACCESSIBILITY ── */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); border: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+  @media (prefers-contrast: more) {
+    :root { --border: rgba(192,132,252,0.5); --text-muted: #b0acc8; }
+  }
+
 </style>
 </head>
 <body>
@@ -906,7 +1040,7 @@
   <div class="toast" id="toast"></div>
 
   <!-- ══════════════════ HOME SCREEN ══════════════════ -->
-  <div class="screen active" id="screen-home">
+  <div class="screen active" id="screen-home" role="main">
     <div class="topbar">
       <div>
         <h1>OndaMia</h1>
@@ -1398,9 +1532,146 @@
     </div>
   </div>
 
+
+  <!-- ── GDPR BANNER ── -->
+  <div class="gdpr-banner hidden" id="gdpr-banner" role="dialog" aria-labelledby="gdpr-title" aria-modal="true">
+    <div class="gdpr-title" id="gdpr-title">🔒 La tua privacy è protetta</div>
+    <div class="gdpr-text">
+      OndaMia salva i tuoi dati <strong>solo sul tuo dispositivo</strong>.<br>
+      Nessun dato viene inviato a server esterni. Nessun account richiesto.<br>
+      Nessuna pubblicità. Nessun tracciamento.<br><br>
+      Continuando accetti i nostri <span class="gdpr-link" onclick="showPrivacy()" role="button" tabindex="0">Termini e Privacy Policy</span>.
+    </div>
+    <div class="gdpr-btns">
+      <button class="btn-primary" onclick="acceptGDPR()" style="flex:1" aria-label="Accetta e continua">✅ Accetta e continua</button>
+    </div>
+  </div>
+
+  <!-- ── PRIVACY MODAL ── -->
+  <div class="modal-overlay" id="privacy-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">🔒 Privacy Policy</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.8;margin-top:8px">
+        <strong style="color:var(--text)">Dati raccolti</strong><br>
+        OndaMia non raccoglie alcun dato personale. Tutti i contenuti (voci del diario, emozioni, sessioni di respiro) sono salvati esclusivamente in locale sul tuo dispositivo tramite localStorage del browser.<br><br>
+        <strong style="color:var(--text)">Dati condivisi con terzi</strong><br>
+        Nessun dato viene trasmesso a server esterni, terze parti o servizi di analisi.<br><br>
+        <strong style="color:var(--text)">Cookie e tracciamento</strong><br>
+        L'app non utilizza cookie, tracker, analytics o pubblicità di alcun tipo.<br><br>
+        <strong style="color:var(--text)">Minori</strong><br>
+        L'app è progettata per essere usata in sicurezza da adolescenti. Non richiede registrazione né dati personali.<br><br>
+        <strong style="color:var(--text)">I tuoi diritti (GDPR)</strong><br>
+        Poiché i dati risiedono solo sul tuo dispositivo, puoi cancellarli in qualsiasi momento dalla sezione Diario → Svuota, o cancellando i dati del browser/app.<br><br>
+        <strong style="color:var(--text)">Contatti</strong><br>
+        Per qualsiasi domanda: <span style="color:var(--accent)">ondamia@fabercris.it</span><br><br>
+        <em>Ultimo aggiornamento: Maggio 2025</em>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn-primary" onclick="closePrivacy()" style="width:100%">Chiudi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ONBOARDING OVERLAY ── -->
+  <div class="onboard-overlay hidden" id="onboard-overlay" role="dialog" aria-label="Guida introduttiva" aria-modal="true">
+
+    <!-- Slide 1: Benvenuto -->
+    <div class="onboard-slide active" id="slide-0">
+      <div class="onboard-icon">🌊</div>
+      <div class="onboard-title">Benvenuto in OndaMia</div>
+      <div class="onboard-text">
+        Il tuo spazio sicuro per esplorare le emozioni.<br>
+        Non devi sapere come ti senti — partiamo dal corpo.
+      </div>
+      <div class="onboard-highlight">
+        💡 <strong>Il surf delle emozioni:</strong> non si tratta di eliminare quello che senti, ma di imparare a cavalcarlo come un'onda.
+      </div>
+    </div>
+
+    <!-- Slide 2: Corpo -->
+    <div class="onboard-slide" id="slide-1">
+      <div class="onboard-icon">🫀</div>
+      <div class="onboard-title">Inizia dal corpo</div>
+      <div class="onboard-text">
+        Tocca la parte del corpo dove senti qualcosa — anche solo una leggera tensione o calore.
+      </div>
+      <div class="onboard-highlight">
+        👆 Vai su <strong>CORPO</strong> nel menu in basso<br>
+        → tocca una zona della sagoma<br>
+        → scegli la sensazione<br>
+        → scopri l'emozione collegata
+      </div>
+    </div>
+
+    <!-- Slide 3: Respira -->
+    <div class="onboard-slide" id="slide-2">
+      <div class="onboard-icon">🫁</div>
+      <div class="onboard-title">Respira con me</div>
+      <div class="onboard-text">
+        Quando sei sopraffatto, la sezione <strong>RESPIRA</strong> ti guida con tecniche di respirazione scientificamente validate.
+      </div>
+      <div class="onboard-highlight">
+        🌊 <strong>Box Breathing</strong> — usata dai Navy SEAL<br>
+        😴 <strong>4-7-8</strong> — per dormire e calmarsi<br>
+        ❤️ <strong>Coerenza Cardiaca</strong> — 3 volte al giorno<br>
+        🌿 <strong>Grounding 5-4-3-2-1</strong> — torna al presente
+      </div>
+    </div>
+
+    <!-- Slide 4: Diario -->
+    <div class="onboard-slide" id="slide-3">
+      <div class="onboard-icon">📝</div>
+      <div class="onboard-title">Scrivi, colora, deposita</div>
+      <div class="onboard-text">
+        In <strong>JOURNAL</strong> puoi scrivere liberamente, scegliere un colore per il tuo umore o ricevere domande di reframing.
+      </div>
+      <div class="onboard-highlight">
+        📦 La <strong>SCATOLA EMOTIVA</strong> è un gesto concreto:<br>
+        metti fuori ciò che è dentro.<br>
+        Scegli un'emoji, scrivi una parola, depositala.
+      </div>
+    </div>
+
+    <!-- Slide 5: Privacy -->
+    <div class="onboard-slide" id="slide-4">
+      <div class="onboard-icon">🔒</div>
+      <div class="onboard-title">I tuoi dati sono tuoi</div>
+      <div class="onboard-text">
+        Tutto rimane <strong>solo sul tuo dispositivo</strong>.<br>
+        Nessun account. Nessun server. Nessuna pubblicità.<br>
+        Solo tu e le tue emozioni.
+      </div>
+      <div class="onboard-highlight">
+        ✅ Nessun dato inviato a terzi<br>
+        ✅ Nessuna registrazione richiesta<br>
+        ✅ Conforme GDPR<br>
+        ✅ Progettato per adolescenti in sicurezza
+      </div>
+    </div>
+
+    <!-- Dots indicatore -->
+    <div class="onboard-dots" id="onboard-dots" aria-hidden="true">
+      <div class="onboard-dot active"></div>
+      <div class="onboard-dot"></div>
+      <div class="onboard-dot"></div>
+      <div class="onboard-dot"></div>
+      <div class="onboard-dot"></div>
+    </div>
+
+    <!-- Nav buttons -->
+    <div class="onboard-nav">
+      <button class="btn-secondary" id="onboard-back" onclick="onboardPrev()" style="display:none" aria-label="Indietro">← Indietro</button>
+      <button class="btn-primary" id="onboard-next" onclick="onboardNext()" aria-label="Avanti">Avanti →</button>
+    </div>
+    <div style="margin-top:12px">
+      <button onclick="skipOnboarding()" style="background:none;border:none;color:var(--text-muted);font-size:0.75rem;cursor:pointer;text-decoration:underline" aria-label="Salta introduzione">Salta introduzione</button>
+    </div>
+  </div>
+
   <!-- ── BOTTOM NAV ── -->
   <nav class="bottom-nav">
-    <button class="nav-btn active" onclick="navigate('home',this)" id="nav-home">
+    <button class="nav-btn active" onclick="navigate('home',this)" id="nav-home" aria-label="Casa - Schermata principale">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
         <polyline points="9 22 9 12 15 12 15 22"/>
@@ -1408,7 +1679,7 @@
       Casa
       <div class="nav-dot"></div>
     </button>
-    <button class="nav-btn" onclick="navigate('body',this)" id="nav-body">
+    <button class="nav-btn" onclick="navigate('body',this)" id="nav-body" aria-label="Corpo - Mappa corporea">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="5" r="3"/>
         <path d="M12 8v8M8 10l4 2 4-2M8 18l4-2 4 2"/>
@@ -1416,14 +1687,14 @@
       Corpo
       <div class="nav-dot"></div>
     </button>
-    <button class="nav-btn" onclick="navigate('meta',this)" id="nav-meta">
+    <button class="nav-btn" onclick="navigate('meta',this)" id="nav-meta" aria-label="Emozioni - Meta emozioni">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2zm0-10h2v8h-2z"/>
       </svg>
       Emozioni
       <div class="nav-dot"></div>
     </button>
-    <button class="nav-btn" onclick="navigate('reg',this)" id="nav-reg">
+    <button class="nav-btn" onclick="navigate('reg',this)" id="nav-reg" aria-label="Respira - Tecniche di respirazione">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="10"/>
         <path d="M12 6v6l4 2"/>
@@ -1431,7 +1702,7 @@
       Respira
       <div class="nav-dot"></div>
     </button>
-    <button class="nav-btn" onclick="navigate('journal',this)" id="nav-journal">
+    <button class="nav-btn" onclick="navigate('journal',this)" id="nav-journal" aria-label="Journal - Diario creativo">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
         <polyline points="14 2 14 8 20 8"/>
@@ -1442,14 +1713,14 @@
       Journal
       <div class="nav-dot"></div>
     </button>
-    <button class="nav-btn" onclick="navigate('box',this)" id="nav-box">
+    <button class="nav-btn" onclick="navigate('box',this)" id="nav-box" aria-label="Scatola - Scatola emotiva">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
       </svg>
       Scatola
       <div class="nav-dot"></div>
     </button>
-    <button class="nav-btn" onclick="navigate('diary',this)" id="nav-diary">
+    <button class="nav-btn" onclick="navigate('diary',this)" id="nav-diary" aria-label="Diario - Tutte le voci salvate">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
@@ -2123,6 +2394,15 @@ function init() {
   resetBreathing();
   document.getElementById('tech-description').innerHTML = TECHNIQUES['box'].desc;
 
+  // Onboarding e GDPR al primo avvio
+  if (!localStorage.getItem('ondamia_onboarded')) {
+    setTimeout(() => showOnboarding(), 600);
+  } else if (!localStorage.getItem('ondamia_gdpr')) {
+    setTimeout(() => {
+      document.getElementById('gdpr-banner').classList.remove('hidden');
+    }, 800);
+  }
+
   // streak update
   const db = loadDB();
   const lastDate = localStorage.getItem('ondamia_last_date');
@@ -2245,6 +2525,108 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.' + id).forEach(el => enableDragScroll(el));
   });
 });
+
+// ══════════════════════════════════════════
+//  ONBOARDING
+// ══════════════════════════════════════════
+let onboardStep = 0;
+const TOTAL_SLIDES = 5;
+
+function showOnboarding() {
+  document.getElementById('onboard-overlay').classList.remove('hidden');
+  updateOnboardSlide();
+}
+
+function hideOnboarding() {
+  document.getElementById('onboard-overlay').classList.add('hidden');
+}
+
+function updateOnboardSlide() {
+  document.querySelectorAll('.onboard-slide').forEach((s, i) => {
+    s.classList.toggle('active', i === onboardStep);
+  });
+  document.querySelectorAll('.onboard-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === onboardStep);
+  });
+  const backBtn = document.getElementById('onboard-back');
+  const nextBtn = document.getElementById('onboard-next');
+  backBtn.style.display = onboardStep === 0 ? 'none' : 'inline-flex';
+  const isLast = onboardStep === TOTAL_SLIDES - 1;
+  nextBtn.textContent = isLast ? '🌊 Inizia!' : 'Avanti →';
+  nextBtn.setAttribute('aria-label', isLast ? 'Inizia a usare OndaMia' : 'Avanti');
+}
+
+function onboardNext() {
+  if (onboardStep < TOTAL_SLIDES - 1) {
+    onboardStep++;
+    updateOnboardSlide();
+  } else {
+    skipOnboarding();
+  }
+}
+
+function onboardPrev() {
+  if (onboardStep > 0) {
+    onboardStep--;
+    updateOnboardSlide();
+  }
+}
+
+function skipOnboarding() {
+  hideOnboarding();
+  localStorage.setItem('ondamia_onboarded', '1');
+  // Mostra GDPR se non ancora accettato
+  if (!localStorage.getItem('ondamia_gdpr')) {
+    setTimeout(() => {
+      document.getElementById('gdpr-banner').classList.remove('hidden');
+    }, 400);
+  }
+}
+
+// ══════════════════════════════════════════
+//  GDPR
+// ══════════════════════════════════════════
+function acceptGDPR() {
+  localStorage.setItem('ondamia_gdpr', '1');
+  document.getElementById('gdpr-banner').classList.add('hidden');
+  showToast('✅ Privacy accettata — i tuoi dati restano solo qui!');
+}
+
+function showPrivacy() {
+  document.getElementById('privacy-modal').classList.add('show');
+}
+
+function closePrivacy() {
+  document.getElementById('privacy-modal').classList.remove('show');
+}
+
+// ══════════════════════════════════════════
+//  KEYBOARD NAVIGATION ACCESSIBILITY
+// ══════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  // ESC chiude modal e onboarding
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show'));
+    if (!document.getElementById('onboard-overlay').classList.contains('hidden')) {
+      skipOnboarding();
+    }
+  }
+  // Frecce per onboarding
+  if (!document.getElementById('onboard-overlay').classList.contains('hidden')) {
+    if (e.key === 'ArrowRight') onboardNext();
+    if (e.key === 'ArrowLeft') onboardPrev();
+  }
+});
+
+// Trap focus nel banner GDPR per accessibilità
+document.getElementById('gdpr-banner') && document.getElementById('gdpr-banner').addEventListener('keydown', e => {
+  if (e.key === 'Tab') {
+    const focusable = document.getElementById('gdpr-banner').querySelectorAll('button, [tabindex="0"]');
+    // Nessun trap necessario con un solo bottone
+  }
+});
+
+
 </script>
 </body>
 </html>
