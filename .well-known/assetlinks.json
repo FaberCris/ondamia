@@ -1,8 +1,8 @@
 [{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "it.fabercris.ondamia",
-        "sha256_cert_fingerprints": ["73:C6:E7:33:9B:E3:63:8D:FB:39:7B:CB:47:02:E7:0D:F5:69:59:87:A1:FE:3D:AD:D5:C1:A4:66:44:61:BD:57"]
-      }
-    }]
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "it.fabercris.ondamia",
+    "sha256_cert_fingerprints": ["73:C6:E7:33:9B:E3:63:8D:FB:39:7B:CB:47:02:E7:0D:F5:69:59:87:A1:FE:3D:AD:D5:C1:A4:66:44:61:BD:57"]
+  }
+}]
