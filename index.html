@@ -895,6 +895,9 @@
   }
   .body-area-hit:hover { fill: rgba(192,132,252,0.08); }
   .body-area-hit.active { fill: rgba(192,132,252,0.15); }
+  .css-part { transition: all 0.2s ease; }
+  .css-part:hover { border-color: #f0abfc !important; background: linear-gradient(135deg,#3d3460,#2e2848) !important; box-shadow: 0 0 12px rgba(192,132,252,0.4); }
+  .css-part.active { border-color: #f0abfc !important; background: linear-gradient(135deg,#4a3d70,#362f58) !important; box-shadow: 0 0 16px rgba(192,132,252,0.6); }
 </style>
 </head>
 <body>
@@ -990,106 +993,85 @@
       </div>
 
       <!-- SVG Body -->
-      <div class="body-svg-wrap" id="body-svg-wrap">
-        <svg viewBox="0 0 140 360" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-          <defs>
-            <linearGradient id="bodyFill" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#2d2550;stop-opacity:1"/>
-              <stop offset="100%" style="stop-color:#1e1a38;stop-opacity:1"/>
-            </linearGradient>
-            <linearGradient id="strokeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#c084fc;stop-opacity:1"/>
-              <stop offset="100%" style="stop-color:#818cf8;stop-opacity:1"/>
-            </linearGradient>
-          </defs>
+      <div class="body-svg-wrap" id="body-svg-wrap" style="position:relative;width:160px;height:380px;margin:0 auto">
+
+        <!-- SAGOMA CSS -->
+        <div id="css-body" style="position:relative;width:160px;height:380px">
 
           <!-- Testa -->
-          <ellipse cx="70" cy="32" rx="22" ry="26"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.5"/>
+          <div class="css-part" id="hit-head"
+            style="position:absolute;left:50%;transform:translateX(-50%);top:0;width:70px;height:75px;border-radius:50%;background:linear-gradient(135deg,#2d2550,#1e1a38);border:2px solid #c084fc;cursor:pointer"
+            onclick="selectBodyArea('testa','Testa','😤','tensione alla testa')"></div>
 
           <!-- Collo -->
-          <rect x="62" y="56" width="16" height="14" rx="4"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.2"/>
+          <div style="position:absolute;left:50%;transform:translateX(-50%);top:70px;width:26px;height:22px;border-radius:4px;background:linear-gradient(135deg,#2d2550,#1e1a38);border:1.5px solid #c084fc"></div>
 
           <!-- Torso -->
-          <path d="M42 68 Q28 82 26 122 Q24 162 30 182 L110 182 Q116 162 114 122 Q112 82 98 68 Z"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.5"/>
+          <div class="css-part" id="hit-torso"
+            style="position:absolute;left:50%;transform:translateX(-50%);top:88px;width:90px;height:110px;border-radius:18px 18px 22px 22px;background:linear-gradient(135deg,#2d2550,#1e1a38);border:2px solid #c084fc;cursor:pointer"
+            onclick="selectBodyArea('petto','Petto','💙','peso o calore al petto')">
+            <!-- Stomaco (zona interna) -->
+            <div class="css-part"
+              style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);width:70px;height:40px;border-radius:10px;background:transparent;cursor:pointer"
+              onclick="event.stopPropagation();selectBodyArea('stomaco','Stomaco','🦋','farfalle o contrazione')"></div>
+          </div>
 
           <!-- Spalla sinistra -->
-          <ellipse cx="35" cy="80" rx="14" ry="10"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.2"/>
+          <div class="css-part"
+            style="position:absolute;left:8px;top:88px;width:30px;height:28px;border-radius:50%;background:linear-gradient(135deg,#2d2550,#1e1a38);border:2px solid #c084fc;cursor:pointer"
+            onclick="selectBodyArea('spalla','Spalle','⚡','tensione alle spalle')"></div>
 
           <!-- Spalla destra -->
-          <ellipse cx="105" cy="80" rx="14" ry="10"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.2"/>
+          <div class="css-part"
+            style="position:absolute;right:8px;top:88px;width:30px;height:28px;border-radius:50%;background:linear-gradient(135deg,#2d2550,#1e1a38);border:2px solid #c084fc;cursor:pointer"
+            onclick="selectBodyArea('spalla','Spalle','⚡','tensione alle spalle')"></div>
 
           <!-- Braccio sinistro -->
-          <path d="M28 88 Q14 110 14 148 Q14 168 20 178 L32 178 Q36 168 38 148 Q40 118 50 94 Z"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.2"/>
+          <div class="css-part"
+            style="position:absolute;left:2px;top:112px;width:26px;height:100px;border-radius:13px;background:linear-gradient(135deg,#2d2550,#1e1a38);border:2px solid #c084fc;cursor:pointer"
+            onclick="selectBodyArea('braccia','Braccia','💪','pesantezza alle braccia')"></div>
 
           <!-- Braccio destro -->
-          <path d="M112 88 Q126 110 126 148 Q126 168 120 178 L108 178 Q104 168 102 148 Q100 118 90 94 Z"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.2"/>
+          <div class="css-part"
+            style="position:absolute;right:2px;top:112px;width:26px;height:100px;border-radius:13px;background:linear-gradient(135deg,#2d2550,#1e1a38);border:2px solid #c084fc;cursor:pointer"
+            onclick="selectBodyArea('braccia','Braccia','💪','pesantezza alle braccia')"></div>
 
           <!-- Mano sinistra -->
-          <ellipse cx="20" cy="185" rx="10" ry="13"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.2"/>
+          <div style="position:absolute;left:4px;top:208px;width:24px;height:32px;border-radius:12px;background:linear-gradient(135deg,#2d2550,#1e1a38);border:1.5px solid #c084fc"></div>
 
           <!-- Mano destra -->
-          <ellipse cx="120" cy="185" rx="10" ry="13"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.2"/>
+          <div style="position:absolute;right:4px;top:208px;width:24px;height:32px;border-radius:12px;background:linear-gradient(135deg,#2d2550,#1e1a38);border:1.5px solid #c084fc"></div>
+
+          <!-- Bacino -->
+          <div class="css-part"
+            style="position:absolute;left:50%;transform:translateX(-50%);top:194px;width:96px;height:32px;border-radius:10px;background:linear-gradient(135deg,#2d2550,#1e1a38);border:2px solid #c084fc;cursor:pointer"
+            onclick="selectBodyArea('pancia','Pancia / Fianchi','🌀','tensione all'addome')"></div>
 
           <!-- Gamba sinistra -->
-          <path d="M50 182 Q44 222 42 265 Q40 305 44 332 L62 332 Q66 305 66 265 Q68 222 70 182 Z"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.3"/>
+          <div class="css-part"
+            style="position:absolute;left:22px;top:222px;width:40px;height:130px;border-radius:12px;background:linear-gradient(135deg,#2d2550,#1e1a38);border:2px solid #c084fc;cursor:pointer"
+            onclick="selectBodyArea('gambe','Gambe','🦵','gambe pesanti o irrequiete')"></div>
 
           <!-- Gamba destra -->
-          <path d="M90 182 Q96 222 98 265 Q100 305 96 332 L78 332 Q74 305 74 265 Q72 222 70 182 Z"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.3"/>
+          <div class="css-part"
+            style="position:absolute;right:22px;top:222px;width:40px;height:130px;border-radius:12px;background:linear-gradient(135deg,#2d2550,#1e1a38);border:2px solid #c084fc;cursor:pointer"
+            onclick="selectBodyArea('gambe','Gambe','🦵','gambe pesanti o irrequiete')"></div>
 
           <!-- Piede sinistro -->
-          <ellipse cx="53" cy="342" rx="13" ry="8"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.2"/>
+          <div style="position:absolute;left:16px;top:348px;width:48px;height:22px;border-radius:10px;background:linear-gradient(135deg,#2d2550,#1e1a38);border:1.5px solid #c084fc"></div>
 
           <!-- Piede destro -->
-          <ellipse cx="87" cy="342" rx="13" ry="8"
-            fill="url(#bodyFill)" stroke="url(#strokeGrad)" stroke-width="1.2"/>
+          <div style="position:absolute;right:16px;top:348px;width:48px;height:22px;border-radius:10px;background:linear-gradient(135deg,#2d2550,#1e1a38);border:1.5px solid #c084fc"></div>
 
-          <!-- ZONE CLICCABILI (trasparenti sopra la sagoma) -->
-          <!-- Testa -->
-          <ellipse class="body-area-hit" id="area-head" cx="70" cy="32" rx="22" ry="26"
-            fill="transparent" onclick="selectBodyArea('testa','Testa','😤','tensione alla testa')"/>
-          <!-- Gola -->
-          <rect class="body-area-hit" id="area-throat" x="55" y="54" width="30" height="22" rx="5"
-            fill="transparent" onclick="selectBodyArea('gola','Gola / Petto alto','😶','nodo alla gola')"/>
-          <!-- Petto -->
-          <ellipse class="body-area-hit" id="area-chest" cx="70" cy="108" rx="30" ry="24"
-            fill="transparent" onclick="selectBodyArea('petto','Petto','💙','peso o calore al petto')"/>
-          <!-- Stomaco -->
-          <ellipse class="body-area-hit" id="area-stomach" cx="70" cy="150" rx="26" ry="20"
-            fill="transparent" onclick="selectBodyArea('stomaco','Stomaco','🦋','farfalle o contrazione allo stomaco')"/>
-          <!-- Spalla sinistra -->
-          <ellipse class="body-area-hit" id="area-lshoulder" cx="35" cy="80" rx="16" ry="12"
-            fill="transparent" onclick="selectBodyArea('spalla','Spalle','⚡','tensione alle spalle')"/>
-          <!-- Spalla destra -->
-          <ellipse class="body-area-hit" id="area-rshoulder" cx="105" cy="80" rx="16" ry="12"
-            fill="transparent" onclick="selectBodyArea('spalla','Spalle','⚡','tensione alle spalle')"/>
-          <!-- Braccio sinistro -->
-          <ellipse class="body-area-hit" id="area-larm" cx="22" cy="138" rx="11" ry="28"
-            fill="transparent" onclick="selectBodyArea('braccia','Braccia','💪','formicolio o pesantezza alle braccia')"/>
-          <!-- Braccio destro -->
-          <ellipse class="body-area-hit" id="area-rarm" cx="118" cy="138" rx="11" ry="28"
-            fill="transparent" onclick="selectBodyArea('braccia','Braccia','💪','formicolio o pesantezza alle braccia')"/>
-          <!-- Addome -->
-          <ellipse class="body-area-hit" id="area-belly" cx="70" cy="175" rx="24" ry="12"
-            fill="transparent" onclick="selectBodyArea('pancia','Pancia / Fianchi','🌀','tensione o calore all'addome')"/>
-          <!-- Gamba sinistra -->
-          <ellipse class="body-area-hit" id="area-lleg" cx="53" cy="260" rx="13" ry="45"
-            fill="transparent" onclick="selectBodyArea('gambe','Gambe','🦵','gambe pesanti o irrequiete')"/>
-          <!-- Gamba destra -->
-          <ellipse class="body-area-hit" id="area-rleg" cx="87" cy="260" rx="13" ry="45"
-            fill="transparent" onclick="selectBodyArea('gambe','Gambe','🦵','gambe pesanti o irrequiete')"/>
-        </svg>
+          <!-- Labels zone -->
+          <div style="position:absolute;left:50%;transform:translateX(-50%);top:22px;font-size:0.5rem;color:#8b87b0;white-space:nowrap;pointer-events:none">testa</div>
+          <div style="position:absolute;left:50%;transform:translateX(-50%);top:118px;font-size:0.5rem;color:#8b87b0;white-space:nowrap;pointer-events:none">petto</div>
+          <div style="position:absolute;left:50%;transform:translateX(-50%);top:158px;font-size:0.5rem;color:#8b87b0;white-space:nowrap;pointer-events:none">stomaco</div>
+          <div style="position:absolute;left:-18px;top:148px;font-size:0.48rem;color:#8b87b0;white-space:nowrap;pointer-events:none;transform:rotate(-90deg)">braccio</div>
+          <div style="position:absolute;right:-18px;top:148px;font-size:0.48rem;color:#8b87b0;white-space:nowrap;pointer-events:none;transform:rotate(90deg)">braccio</div>
+          <div style="position:absolute;left:26px;top:270px;font-size:0.48rem;color:#8b87b0;white-space:nowrap;pointer-events:none">gamba</div>
+          <div style="position:absolute;right:16px;top:270px;font-size:0.48rem;color:#8b87b0;white-space:nowrap;pointer-events:none">gamba</div>
+        </div>
       </div>
 
       <div class="body-legend">
@@ -1688,13 +1670,8 @@ function selectBodyArea(areaId, areaLabel, emoji, hint) {
   STATE.selectedBodyArea = areaId;
   STATE.selectedSensation = null;
 
-  document.querySelectorAll('.body-area-hit').forEach(a => a.classList.remove('active'));
-  const areaEl = document.getElementById('area-' + areaId.split('-')[0]) ||
-    document.querySelector('[id^="area-"]');
-  // highlight all matching areas
-  document.querySelectorAll('.body-area-hit').forEach(a => {
-    if (a.id.includes(areaId.split('-')[0].substring(0,4))) a.classList.add('active');
-  });
+  document.querySelectorAll('.css-part').forEach(a => a.classList.remove('active'));
+  event.currentTarget.classList.add('active');
 
   document.getElementById('area-name-label').textContent = areaLabel;
   document.getElementById('sensation-section').style.display = 'block';
