@@ -1513,7 +1513,17 @@
         <h1>Il Mio Diario</h1>
         <div class="subtitle">Tutte le voci salvate</div>
       </div>
-      <button class="btn-secondary" onclick="clearDiary()" style="font-size:0.7rem;padding:6px 12px">🗑️ Svuota</button>
+      <div style="display:flex;gap:6px" id="diary-topbar-btns">
+        <button class="btn-secondary" onclick="toggleDiarySelect()" id="diary-select-btn" style="font-size:0.7rem;padding:6px 12px">☑️ Seleziona</button>
+      </div>
+    </div>
+    <!-- Barra azioni selezione (nascosta di default) -->
+    <div id="diary-select-bar" style="display:none;padding:10px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:none;align-items:center;gap:10px;flex-wrap:wrap">
+      <button onclick="selectAllDiary()" style="background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;color:var(--text);font-size:0.75rem;cursor:pointer">✅ Tutte</button>
+      <button onclick="deselectAllDiary()" style="background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;color:var(--text);font-size:0.75rem;cursor:pointer">⬜ Nessuna</button>
+      <span id="diary-selected-count" style="font-size:0.75rem;color:var(--accent);flex:1">0 selezionate</span>
+      <button onclick="deleteSelectedDiary()" class="btn-primary" style="padding:6px 14px;font-size:0.75rem;background:linear-gradient(135deg,var(--danger),#dc2626)">🗑️ Elimina</button>
+      <button onclick="toggleDiarySelect()" style="background:none;border:none;color:var(--text-muted);font-size:0.8rem;cursor:pointer">✕ Annulla</button>
     </div>
     <div style="padding:0 16px 8px">
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px" id="diary-filter-row">
@@ -2433,6 +2443,67 @@ function filterDiary(btn, type) {
   renderDiary();
 }
 
+let diarySelectMode = false;
+let diarySelected = new Set();
+
+function toggleDiarySelect() {
+  diarySelectMode = !diarySelectMode;
+  diarySelected.clear();
+  const bar = document.getElementById('diary-select-bar');
+  const btn = document.getElementById('diary-select-btn');
+  if (diarySelectMode) {
+    bar.style.display = 'flex';
+    btn.textContent = '✕ Esci';
+  } else {
+    bar.style.display = 'none';
+    btn.textContent = '☑️ Seleziona';
+  }
+  renderDiary();
+}
+
+function selectAllDiary() {
+  const db = loadDB();
+  let entries = db.entries.slice().reverse();
+  if (currentFilter !== 'all') entries = entries.filter(e => e.type === currentFilter);
+  entries.forEach(e => diarySelected.add(e.ts));
+  updateDiarySelectCount();
+  renderDiary();
+}
+
+function deselectAllDiary() {
+  diarySelected.clear();
+  updateDiarySelectCount();
+  renderDiary();
+}
+
+function updateDiarySelectCount() {
+  const el = document.getElementById('diary-selected-count');
+  if (el) el.textContent = diarySelected.size + ' selezionate';
+}
+
+function toggleDiaryItem(ts) {
+  if (diarySelected.has(ts)) {
+    diarySelected.delete(ts);
+  } else {
+    diarySelected.add(ts);
+  }
+  updateDiarySelectCount();
+  renderDiary();
+}
+
+function deleteSelectedDiary() {
+  if (diarySelected.size === 0) { showToast('Seleziona almeno una voce!'); return; }
+  if (!confirm('Eliminare ' + diarySelected.size + ' voce/i selezionata/e?')) return;
+  const db = loadDB();
+  db.entries = db.entries.filter(e => !diarySelected.has(e.ts));
+  saveDB(db);
+  diarySelected.clear();
+  updateDiarySelectCount();
+  renderDiary();
+  refreshHome();
+  showToast('🗑️ Voci eliminate!');
+}
+
 function renderDiary() {
   const db = loadDB();
   let entries = db.entries.slice().reverse();
@@ -2463,7 +2534,14 @@ function renderDiary() {
     const textHtml = e.text
       ? '<div style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;margin-top:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical">' + e.text + '</div>'
       : '';
-    return '<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start">'
+    const isSelected = diarySelected.has(e.ts);
+    const checkboxHtml = diarySelectMode
+      ? '<div onclick="toggleDiaryItem(' + e.ts + ')" style="flex-shrink:0;width:24px;height:24px;border-radius:6px;border:2px solid ' + (isSelected ? 'var(--accent)' : 'var(--border)') + ';background:' + (isSelected ? 'var(--accent)' : 'transparent') + ';display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s">' + (isSelected ? '<span style="color:white;font-size:0.8rem">✓</span>' : '') + '</div>'
+      : '';
+    const cardBorder = isSelected && diarySelectMode ? 'var(--accent)' : 'var(--border)';
+    const cardBg = isSelected && diarySelectMode ? 'var(--card2)' : 'var(--card)';
+    return '<div onclick="' + (diarySelectMode ? 'toggleDiaryItem(' + e.ts + ')' : '') + '" style="background:' + cardBg + ';border:1px solid ' + cardBorder + ';border-radius:16px;padding:16px;display:flex;gap:12px;align-items:flex-start;transition:all 0.2s;cursor:' + (diarySelectMode ? 'pointer' : 'default') + '">'
+      + checkboxHtml
       + '<div style="font-size:1.8rem;flex-shrink:0">' + (e.emoji || '📝') + '</div>'
       + '<div style="flex:1;min-width:0">'
       + '<div style="font-size:0.7rem;color:var(--accent);margin-bottom:3px">' + typeLabel + '</div>'
@@ -2475,10 +2553,12 @@ function renderDiary() {
 }
 
 function clearDiary() {
-  if (!confirm('Sei sicuro di voler cancellare tutte le voci? Non è reversibile.')) return;
+  if (!confirm('Sei sicuro di voler cancellare TUTTE le voci? Non è reversibile.')) return;
   const db = loadDB();
   db.entries = [];
   saveDB(db);
+  diarySelected.clear();
+  if (diarySelectMode) toggleDiarySelect();
   renderDiary();
   refreshHome();
   showToast('🗑️ Diario svuotato');
