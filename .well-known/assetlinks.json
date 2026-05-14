@@ -3,6 +3,9 @@
   "target": {
     "namespace": "android_app",
     "package_name": "it.fabercris.ondamia",
-    "sha256_cert_fingerprints": ["73:C6:E7:33:9B:E3:63:8D:FB:39:7B:CB:47:02:E7:0D:F5:69:59:87:A1:FE:3D:AD:D5:C1:A4:66:44:61:BD:57"]
+    "sha256_cert_fingerprints": [
+      "73:C6:E7:33:9B:E3:63:8D:FB:39:7B:CB:47:02:E7:0D:F5:69:59:87:A1:FE:3D:AD:D5:C1:A4:66:44:61:BD:57",
+      "D3:22:A3:69:04:A4:C9:16:28:41:BB:59:74:77:D6:AB:18:BD:6A:51:63:4C:EB:2E:B7:A1:52:88:BA:41:D7:07"
+    ]
   }
 }]
