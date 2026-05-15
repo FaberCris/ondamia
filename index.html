@@ -507,13 +507,14 @@
     font-size: 0.85rem;
     font-weight: 500;
     color: #fff;
-    transition: transform 4s ease-in-out;
+    transition: transform 0.6s ease-in-out;
     cursor: pointer;
     box-shadow: 0 0 40px var(--glow);
   }
   .breath-circle.inhale { transform: scale(1.35); }
-  .breath-circle.exhale { transform: scale(0.85); }
-  .breath-circle.hold { transform: scale(1.35); }
+  .breath-circle.exhale { transform: scale(0.82); }
+  .breath-circle.hold-in { transform: scale(1.35); }
+  .breath-circle.hold-out { transform: scale(0.82); }
 
   .technique-tabs {
     display: flex;
@@ -2071,9 +2072,9 @@ const TECHNIQUES = {
     name: 'Respirazione Box (4-4-4-4)',
     phases: [
       { label: 'Inspira', duration: 4, class: 'inhale' },
-      { label: 'Tieni', duration: 4, class: 'hold' },
+      { label: 'Tieni', duration: 4, class: 'hold-in' },
       { label: 'Espira', duration: 4, class: 'exhale' },
-      { label: 'Tieni', duration: 4, class: 'hold' },
+      { label: 'Tieni', duration: 4, class: 'hold-out' },
     ],
     cycles: 4,
     desc: `<h3>📦 Box Breathing</h3><p>Usata dai Navy SEAL e dai terapisti per calmare il sistema nervoso autonomo in pochi minuti.</p><ul><li>Inspira per 4 secondi</li><li>Tieni per 4 secondi</li><li>Espira per 4 secondi</li><li>Tieni per 4 secondi</li></ul><p style="margin-top:10px"><em>Ideale per: ansia acuta, stress prima di un esame, picchi di rabbia.</em></p>`
@@ -2082,7 +2083,7 @@ const TECHNIQUES = {
     name: 'Tecnica 4-7-8',
     phases: [
       { label: 'Inspira', duration: 4, class: 'inhale' },
-      { label: 'Tieni', duration: 7, class: 'hold' },
+      { label: 'Tieni', duration: 7, class: 'hold-in' },
       { label: 'Espira', duration: 8, class: 'exhale' },
     ],
     cycles: 4,
@@ -2154,8 +2155,15 @@ function runBreathPhase() {
   }
   const phase = tech.phases[breathPhaseIndex];
   const circle = document.getElementById('breath-circle');
-  circle.className = 'breath-circle ' + phase.class;
+  // Reset prima, poi applica la nuova classe con micro-delay
+  // per assicurarsi che la transizione CSS parta correttamente
+  circle.className = 'breath-circle';
   circle.textContent = phase.label;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      circle.className = 'breath-circle ' + phase.class;
+    });
+  });
   document.getElementById('breath-phase-label').textContent = `${phase.label}… ${phase.duration}s`;
 
   const totalPhases = tech.phases.length * tech.cycles;
