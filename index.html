@@ -2157,18 +2157,24 @@ function runBreathPhase() {
   const isHold = phase.class === 'hold-in' || phase.class === 'hold-out';
 
   if (isHold) {
-    // Per "Tieni": aggiorna solo il testo, NON toccare transform né transizione
-    // Il cerchio rimane esattamente dove si trova senza nessuno scatto
+    // Tieni: solo testo, cerchio fermo dove si trova
     circle.textContent = phase.label;
   } else {
-    // Per inspira/espira: rimuovi transizione, resetta, poi anima
-    circle.style.transition = 'none';
-    circle.className = 'breath-circle';
+    // Inspira/Espira: aggiorna testo e avvia transizione SENZA reset
+    // Leggi il transform corrente calcolato e applicalo come base
+    const currentTransform = window.getComputedStyle(circle).transform;
     circle.textContent = phase.label;
+    // Applica il transform corrente istantaneamente come punto di partenza
+    circle.style.transition = 'none';
+    circle.style.transform = currentTransform;
+    // Rimuovi le classi vecchie ma mantieni il transform inline
+    circle.className = 'breath-circle';
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
+        // Ora anima verso il nuovo valore
         circle.style.transition = 'transform ' + phase.duration + 's ease-in-out';
-        circle.className = 'breath-circle ' + phase.class;
+        const target = phase.class === 'inhale' ? 'scale(1.35)' : 'scale(0.82)';
+        circle.style.transform = target;
       });
     });
   }
