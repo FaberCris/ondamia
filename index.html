@@ -1338,7 +1338,6 @@
         <div class="breath-ring"></div>
         <div class="breath-ring"></div>
         <div class="breath-circle" id="breath-circle" onclick="startBreathing()">
-          Tocca<br>per iniziare
         </div>
       </div>
 
@@ -2124,8 +2123,9 @@ function resetBreathing() {
   document.querySelectorAll('.tech-tab').forEach((t,i) => t.classList.toggle('active', i===0));
   document.getElementById('tech-description').innerHTML = TECHNIQUES['box'].desc;
   const circle = document.getElementById('breath-circle');
+  circle.style.transition = 'transform 0.5s ease-in-out';
   circle.className = 'breath-circle';
-  circle.textContent = 'Tocca\nper iniziare';
+  circle.textContent = '';
   document.getElementById('breath-phase-label').textContent = '';
   document.getElementById('breath-count-label').textContent = '';
   document.getElementById('breath-bar').style.width = '0%';
@@ -2154,23 +2154,24 @@ function runBreathPhase() {
   }
   const phase = tech.phases[breathPhaseIndex];
   const circle = document.getElementById('breath-circle');
-  // Per hold non animare la transizione (cerchio fermo)
   const isHold = phase.class === 'hold-in' || phase.class === 'hold-out';
-  const transitionDuration = isHold ? '0.3s' : phase.duration + 's';
-  const easing = isHold ? 'ease-out' : 'ease-in-out';
 
-  // Prima rimuovi la transizione per il reset istantaneo
-  circle.style.transition = 'none';
-  circle.className = 'breath-circle';
-  circle.textContent = phase.label;
-
-  // Poi nel prossimo frame applica transizione e nuova classe
-  requestAnimationFrame(() => {
+  if (isHold) {
+    // Per "Tieni": aggiorna solo il testo, NON toccare transform né transizione
+    // Il cerchio rimane esattamente dove si trova senza nessuno scatto
+    circle.textContent = phase.label;
+  } else {
+    // Per inspira/espira: rimuovi transizione, resetta, poi anima
+    circle.style.transition = 'none';
+    circle.className = 'breath-circle';
+    circle.textContent = phase.label;
     requestAnimationFrame(() => {
-      circle.style.transition = 'transform ' + transitionDuration + ' ' + easing;
-      circle.className = 'breath-circle ' + phase.class;
+      requestAnimationFrame(() => {
+        circle.style.transition = 'transform ' + phase.duration + 's ease-in-out';
+        circle.className = 'breath-circle ' + phase.class;
+      });
     });
-  });
+  }
   document.getElementById('breath-phase-label').textContent = `${phase.label}… ${phase.duration}s`;
 
   const totalPhases = tech.phases.length * tech.cycles;
@@ -2205,8 +2206,9 @@ function stopBreathing() {
   document.getElementById('breath-start-btn').style.display = 'inline-flex';
   document.getElementById('breath-stop-btn').style.display = 'none';
   const circle = document.getElementById('breath-circle');
+  circle.style.transition = 'transform 0.5s ease-in-out';
   circle.className = 'breath-circle';
-  circle.textContent = 'Tocca\nper iniziare';
+  circle.textContent = '';
   document.getElementById('breath-phase-label').textContent = '';
 }
 
