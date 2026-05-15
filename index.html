@@ -507,7 +507,6 @@
     font-size: 0.85rem;
     font-weight: 500;
     color: #fff;
-    transition: transform 0.6s ease-in-out;
     cursor: pointer;
     box-shadow: 0 0 40px var(--glow);
   }
@@ -2155,12 +2154,20 @@ function runBreathPhase() {
   }
   const phase = tech.phases[breathPhaseIndex];
   const circle = document.getElementById('breath-circle');
-  // Reset prima, poi applica la nuova classe con micro-delay
-  // per assicurarsi che la transizione CSS parta correttamente
+  // Per hold non animare la transizione (cerchio fermo)
+  const isHold = phase.class === 'hold-in' || phase.class === 'hold-out';
+  const transitionDuration = isHold ? '0.3s' : phase.duration + 's';
+  const easing = isHold ? 'ease-out' : 'ease-in-out';
+
+  // Prima rimuovi la transizione per il reset istantaneo
+  circle.style.transition = 'none';
   circle.className = 'breath-circle';
   circle.textContent = phase.label;
+
+  // Poi nel prossimo frame applica transizione e nuova classe
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
+      circle.style.transition = 'transform ' + transitionDuration + ' ' + easing;
       circle.className = 'breath-circle ' + phase.class;
     });
   });
