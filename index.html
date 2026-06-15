@@ -1032,6 +1032,288 @@
     :root { --border: rgba(192,132,252,0.5); --text-muted: #b0acc8; }
   }
 
+
+  /* ── SELEZIONE PROFILO ── */
+  .profile-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    gap: 24px;
+  }
+  .profile-overlay.hidden { display: none; }
+  .profile-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+  }
+  .profile-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.6;
+    max-width: 300px;
+  }
+  .profile-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 340px;
+  }
+  .profile-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 22px 20px;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .profile-card:hover {
+    border-color: var(--accent);
+    background: var(--card2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--glow);
+  }
+  .profile-card .pc-icon { font-size: 2.4rem; flex-shrink: 0; }
+  .profile-card .pc-info { flex: 1; }
+  .profile-card .pc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 3px;
+    color: var(--text);
+  }
+  .profile-card .pc-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .profile-card .pc-arrow {
+    color: var(--accent);
+    font-size: 1.2rem;
+  }
+
+  /* ── EDU SCREENS ── */
+  .edu-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, rgba(52,211,153,0.15), rgba(52,211,153,0.05));
+    border: 1px solid rgba(52,211,153,0.3);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 0.65rem;
+    color: #34d399;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  /* Radar chart Goleman */
+  .radar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+  }
+  .radar-canvas-wrap {
+    width: 260px;
+    height: 260px;
+    position: relative;
+  }
+  .radar-canvas-wrap canvas { width: 100%; height: 100%; }
+
+  /* Goleman aree */
+  .goleman-area {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 0 16px 10px;
+    transition: all var(--transition);
+  }
+  .goleman-area.active { border-color: var(--accent); background: var(--card2); }
+  .goleman-area-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .goleman-area-title { font-size: 0.9rem; font-weight: 500; }
+  .goleman-area-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--accent);
+  }
+  .goleman-question {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .goleman-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+  }
+  .goleman-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 8px var(--glow);
+  }
+  .goleman-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* Burnout semaforo */
+  .burnout-meter {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 0 16px;
+  }
+  .burnout-scale {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .burnout-scale-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .burnout-scale-name { font-size: 0.88rem; font-weight: 500; }
+  .burnout-indicator {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .burnout-bar-bg {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .burnout-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s ease;
+  }
+  .burnout-desc { font-size: 0.72rem; color: var(--text-muted); line-height: 1.4; }
+
+  /* Trigger diary */
+  .trigger-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--danger);
+    border-radius: 0 14px 14px 0;
+    padding: 14px;
+    margin: 0 16px 10px;
+  }
+  .trigger-item .ti-context { font-size: 0.7rem; color: var(--accent); margin-bottom: 4px; }
+  .trigger-item .ti-text { font-size: 0.85rem; line-height: 1.5; }
+  .trigger-item .ti-time { font-size: 0.65rem; color: var(--text-muted); margin-top: 6px; }
+
+  /* AT stati */
+  .at-states {
+    display: flex;
+    gap: 10px;
+    padding: 0 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .at-state-card {
+    flex-shrink: 0;
+    width: 130px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-align: center;
+  }
+  .at-state-card.selected { border-color: var(--accent); background: var(--card2); }
+  .at-state-card .as-icon { font-size: 1.8rem; margin-bottom: 6px; }
+  .at-state-card .as-name { font-size: 0.8rem; font-weight: 500; margin-bottom: 4px; }
+  .at-state-card .as-desc { font-size: 0.65rem; color: var(--text-muted); line-height: 1.4; }
+
+  /* Strategie */
+  .strategy-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+    margin: 0 16px 12px;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .strategy-card:hover { border-color: var(--accent); background: var(--card2); }
+  .strategy-card .sc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .strategy-card .sc-icon { font-size: 1.5rem; }
+  .strategy-card .sc-title { font-size: 0.9rem; font-weight: 500; }
+  .strategy-card .sc-tag {
+    font-size: 0.6rem;
+    background: rgba(192,132,252,0.1);
+    color: var(--accent);
+    border-radius: 20px;
+    padding: 2px 8px;
+    margin-left: auto;
+  }
+  .strategy-card .sc-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; }
+  .strategy-card .sc-steps {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+    display: none;
+  }
+  .strategy-card.expanded .sc-steps { display: block; }
+  .strategy-card.expanded { border-color: var(--accent); background: var(--card2); }
+
+  /* Switch profilo */
+  .profile-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    transition: all var(--transition);
+  }
+  .profile-switcher:hover { border-color: var(--accent); color: var(--accent); }
+
 </style>
 </head>
 <body>
@@ -1542,6 +1824,34 @@
   </div>
 
 
+
+  <!-- ── SELEZIONE PROFILO ── -->
+  <div class="profile-overlay hidden" id="profile-overlay">
+    <div style="font-size:3rem">🌊</div>
+    <div class="profile-logo">OndaMia</div>
+    <div class="profile-subtitle">
+      Scegli il tuo percorso.<br>Puoi cambiarlo in qualsiasi momento.
+    </div>
+    <div class="profile-cards">
+      <div class="profile-card" onclick="selectProfile('giovane')">
+        <div class="pc-icon">🧡</div>
+        <div class="pc-info">
+          <div class="pc-title">Sono un giovane</div>
+          <div class="pc-desc">Esplora le emozioni, respira, cavalca l'onda. Per ragazzi e adolescenti.</div>
+        </div>
+        <div class="pc-arrow">›</div>
+      </div>
+      <div class="profile-card" onclick="selectProfile('educatore')">
+        <div class="pc-icon">🌿</div>
+        <div class="pc-info">
+          <div class="pc-title">Sono un educatore</div>
+          <div class="pc-desc">Check-up emotivo, prevenzione burnout e strategie di regolazione per professionisti.</div>
+        </div>
+        <div class="pc-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── GDPR BANNER ── -->
   <div class="gdpr-banner hidden" id="gdpr-banner" role="dialog" aria-labelledby="gdpr-title" aria-modal="true">
     <div class="gdpr-title" id="gdpr-title">🔒 La tua privacy è protetta</div>
@@ -1678,6 +1988,462 @@
     </div>
   </div>
 
+
+  <!-- ══════════════════ EDU HOME ══════════════════ -->
+  <div class="screen" id="screen-edu-home" role="main">
+    <div class="topbar">
+      <div>
+        <div class="edu-badge">🌿 Modalità Educatore</div>
+        <h1>Benessere</h1>
+        <div class="subtitle">Check-up emotivo professionale</div>
+      </div>
+      <button class="profile-switcher" onclick="switchProfile()" aria-label="Cambia profilo">
+        🔄 Cambia
+      </button>
+    </div>
+
+    <div style="padding:0 16px 8px">
+      <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:14px">
+        Buongiorno. Prima di prenderti cura degli altri,<br>prenditi cura di te. 🌿
+      </div>
+    </div>
+
+    <!-- Stato rapido -->
+    <div class="section-label">Come stai oggi?</div>
+    <div class="mood-row" id="edu-mood-row">
+      <div class="mood-chip" onclick="eduQuickMood(this,'ricaricato','😊')"><span class="emoji">😊</span>Ricaricato</div>
+      <div class="mood-chip" onclick="eduQuickMood(this,'presente','🧘')"><span class="emoji">🧘</span>Presente</div>
+      <div class="mood-chip" onclick="eduQuickMood(this,'stanco','😮‍💨')"><span class="emoji">😮‍💨</span>Stanco</div>
+      <div class="mood-chip" onclick="eduQuickMood(this,'teso','😤')"><span class="emoji">😤</span>Teso</div>
+      <div class="mood-chip" onclick="eduQuickMood(this,'svuotato','🫥')"><span class="emoji">🫥</span>Svuotato</div>
+      <div class="mood-chip" onclick="eduQuickMood(this,'sopraffatto','🌊')"><span class="emoji">🌊</span>Sopraffatto</div>
+      <div class="mood-chip" onclick="eduQuickMood(this,'motivato','🔥')"><span class="emoji">🔥</span>Motivato</div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="sb-val" id="edu-checks-count">0</div>
+        <div class="sb-label">Check-up totali</div>
+      </div>
+      <div class="stat-box">
+        <div class="sb-val" id="edu-burnout-level" style="font-size:1.2rem">🟢</div>
+        <div class="sb-label">Stato burnout</div>
+      </div>
+      <div class="stat-box">
+        <div class="sb-val" id="edu-streak">0</div>
+        <div class="sb-label">Giorni consecutivi</div>
+      </div>
+    </div>
+
+    <div class="section-label">Esplora le aree</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 16px">
+      <div class="journal-action-btn" onclick="navigate('edu-goleman', document.getElementById('edu-nav-goleman'))">
+        <span class="ja-icon">🧠</span>
+        <span class="ja-title">Intelligenza Emotiva</span>
+        <span class="ja-desc">Le 5 aree di Goleman</span>
+      </div>
+      <div class="journal-action-btn" onclick="navigate('edu-at', document.getElementById('edu-nav-at'))">
+        <span class="ja-icon">🔄</span>
+        <span class="ja-title">Analisi Transazionale</span>
+        <span class="ja-desc">I tuoi stati dell'Io</span>
+      </div>
+      <div class="journal-action-btn" onclick="navigate('edu-trigger', document.getElementById('edu-nav-trigger'))">
+        <span class="ja-icon">⚡</span>
+        <span class="ja-title">I miei Trigger</span>
+        <span class="ja-desc">Riconosci i pattern</span>
+      </div>
+      <div class="journal-action-btn" onclick="navigate('edu-burnout', document.getElementById('edu-nav-burnout'))">
+        <span class="ja-icon">🔥</span>
+        <span class="ja-title">Monitor Burnout</span>
+        <span class="ja-desc">Maslach semplificato</span>
+      </div>
+    </div>
+
+    <div class="section-label">Strategie di cura</div>
+    <div class="card" onclick="navigate('edu-strategie', document.getElementById('edu-nav-strategie'))" style="cursor:pointer;margin:0 16px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:1.8rem">🌿</span>
+        <div>
+          <div class="card-title">Strategie di Regolazione</div>
+          <div class="card-sub" style="margin:0">Journaling riflessivo, autocompassione, ACT, supervisione emotiva</div>
+        </div>
+        <span style="color:var(--accent);font-size:1.2rem;margin-left:auto">›</span>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ══════════════════ EDU GOLEMAN ══════════════════ -->
+  <div class="screen" id="screen-edu-goleman">
+    <div class="topbar">
+      <div>
+        <div class="edu-badge">🧠 Goleman</div>
+        <h1>Intelligenza Emotiva</h1>
+        <div class="subtitle">Le 5 aree chiave</div>
+      </div>
+    </div>
+
+    <div style="padding:0 16px 10px;font-size:0.8rem;color:var(--text-muted);line-height:1.6">
+      Valuta onestamente ogni area da 1 a 10. Non ci sono risposte giuste o sbagliate.
+    </div>
+
+    <!-- Radar chart -->
+    <div class="radar-wrap">
+      <canvas id="goleman-radar" width="260" height="260"></canvas>
+    </div>
+
+    <div class="section-label">Valuta le 5 aree</div>
+
+    <div class="goleman-area" id="gol-0">
+      <div class="goleman-area-header">
+        <div class="goleman-area-title">😌 Autoconsapevolezza</div>
+        <div class="goleman-area-score" id="score-0">5</div>
+      </div>
+      <div class="goleman-question">Riconosco le mie emozioni nel momento in cui accadono, anche in situazioni di stress con il gruppo?</div>
+      <input type="range" class="goleman-slider" min="1" max="10" value="5" oninput="updateGoleman(0, this.value)">
+      <div class="goleman-labels"><span>Difficoltà</span><span>Facilità</span></div>
+    </div>
+
+    <div class="goleman-area" id="gol-1">
+      <div class="goleman-area-header">
+        <div class="goleman-area-title">🎯 Autoregolazione</div>
+        <div class="goleman-area-score" id="score-1">5</div>
+      </div>
+      <div class="goleman-question">Riesco a gestire impulsi e reazioni automatiche anche quando un ragazzo mi mette alla prova?</div>
+      <input type="range" class="goleman-slider" min="1" max="10" value="5" oninput="updateGoleman(1, this.value)">
+      <div class="goleman-labels"><span>Difficoltà</span><span>Facilità</span></div>
+    </div>
+
+    <div class="goleman-area" id="gol-2">
+      <div class="goleman-area-header">
+        <div class="goleman-area-title">🔥 Motivazione</div>
+        <div class="goleman-area-score" id="score-2">5</div>
+      </div>
+      <div class="goleman-question">Sento ancora senso di significato nel mio lavoro educativo, anche nelle giornate più difficili?</div>
+      <input type="range" class="goleman-slider" min="1" max="10" value="5" oninput="updateGoleman(2, this.value)">
+      <div class="goleman-labels"><span>Difficoltà</span><span>Facilità</span></div>
+    </div>
+
+    <div class="goleman-area" id="gol-3">
+      <div class="goleman-area-header">
+        <div class="goleman-area-title">💙 Empatia</div>
+        <div class="goleman-area-score" id="score-3">5</div>
+      </div>
+      <div class="goleman-question">Riesco a sintonizzarmi sullo stato emotivo dei ragazzi senza perdere il mio equilibrio?</div>
+      <input type="range" class="goleman-slider" min="1" max="10" value="5" oninput="updateGoleman(3, this.value)">
+      <div class="goleman-labels"><span>Difficoltà</span><span>Facilità</span></div>
+    </div>
+
+    <div class="goleman-area" id="gol-4">
+      <div class="goleman-area-header">
+        <div class="goleman-area-title">🤝 Abilità Sociali</div>
+        <div class="goleman-area-score" id="score-4">5</div>
+      </div>
+      <div class="goleman-question">Gestisco efficacemente i conflitti nel gruppo e con i colleghi mantenendo relazioni costruttive?</div>
+      <input type="range" class="goleman-slider" min="1" max="10" value="5" oninput="updateGoleman(4, this.value)">
+      <div class="goleman-labels"><span>Difficoltà</span><span>Facilità</span></div>
+    </div>
+
+    <div style="padding:16px;text-align:center">
+      <button class="btn-primary" onclick="saveGoleman()">💾 Salva profilo emotivo</button>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ══════════════════ EDU ANALISI TRANSAZIONALE ══════════════════ -->
+  <div class="screen" id="screen-edu-at">
+    <div class="topbar">
+      <div>
+        <div class="edu-badge">🔄 AT</div>
+        <h1>Analisi Transazionale</h1>
+        <div class="subtitle">I tuoi stati dell'Io</div>
+      </div>
+    </div>
+
+    <div style="padding:0 16px 12px;font-size:0.8rem;color:var(--text-muted);line-height:1.6">
+      Berne identificò tre stati dell'Io che guidano i nostri comportamenti. Qual è quello prevalente in te <em>oggi</em> nella relazione educativa?
+    </div>
+
+    <div class="section-label">I tre stati dell'Io</div>
+    <div class="at-states" id="at-states-row">
+      <div class="at-state-card" onclick="selectATState(this, 'genitore-critico')" id="at-gc">
+        <div class="as-icon">👆</div>
+        <div class="as-name">Genitore Critico</div>
+        <div class="as-desc">Giudico, correggo, stabilisco regole rigide</div>
+      </div>
+      <div class="at-state-card" onclick="selectATState(this, 'genitore-nutritivo')" id="at-gn">
+        <div class="as-icon">🤗</div>
+        <div class="as-name">Genitore Nutritivo</div>
+        <div class="as-desc">Proteggo, supporto, mi prendo cura</div>
+      </div>
+      <div class="at-state-card" onclick="selectATState(this, 'adulto')" id="at-a">
+        <div class="as-icon">⚖️</div>
+        <div class="as-name">Adulto</div>
+        <div class="as-desc">Analizzo, valuto, decido razionalmente</div>
+      </div>
+      <div class="at-state-card" onclick="selectATState(this, 'bambino-adattato')" id="at-ba">
+        <div class="as-icon">😟</div>
+        <div class="as-name">Bambino Adattato</div>
+        <div class="as-desc">Compiacente, ansioso, bisognoso di approvazione</div>
+      </div>
+      <div class="at-state-card" onclick="selectATState(this, 'bambino-libero')" id="at-bl">
+        <div class="as-icon">🎉</div>
+        <div class="as-name">Bambino Libero</div>
+        <div class="as-desc">Spontaneo, creativo, autentico</div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <div id="at-result-section" style="display:none;padding:0 16px">
+      <div class="section-label" style="padding:0 0 10px">Riflessione</div>
+      <div class="card" id="at-result-card">
+        <div class="card-title" id="at-result-title"></div>
+        <div class="card-sub" id="at-result-desc" style="margin-bottom:12px"></div>
+        <div style="font-size:0.8rem;color:var(--text);font-style:italic;line-height:1.6;border-left:2px solid var(--accent);padding-left:10px" id="at-result-reflection"></div>
+        <div style="margin-top:14px">
+          <button class="btn-primary" onclick="saveATState()">💾 Salva riflessione</button>
+        </div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ══════════════════ EDU TRIGGER ══════════════════ -->
+  <div class="screen" id="screen-edu-trigger">
+    <div class="topbar">
+      <div>
+        <div class="edu-badge">⚡ Trigger</div>
+        <h1>I miei Trigger</h1>
+        <div class="subtitle">Riconosci i pattern</div>
+      </div>
+    </div>
+
+    <div style="padding:0 16px 10px;font-size:0.8rem;color:var(--text-muted);line-height:1.6">
+      Un trigger è una situazione che attiva una reazione automatica. Riconoscerli è il primo passo per scegliere come rispondere.
+    </div>
+
+    <div class="section-label">Contesto del trigger</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0 16px">
+      <button class="sensation-btn" id="trig-ctx-gruppo" onclick="selectTriggerCtx(this,'Con il gruppo')">
+        <span class="s-emoji">👥</span>Con il gruppo
+      </button>
+      <button class="sensation-btn" id="trig-ctx-collega" onclick="selectTriggerCtx(this,'Con un collega')">
+        <span class="s-emoji">🤝</span>Con un collega
+      </button>
+      <button class="sensation-btn" id="trig-ctx-famiglia" onclick="selectTriggerCtx(this,'Con una famiglia')">
+        <span class="s-emoji">👨‍👩‍👧</span>Con una famiglia
+      </button>
+      <button class="sensation-btn" id="trig-ctx-sistema" onclick="selectTriggerCtx(this,'Con il sistema')">
+        <span class="s-emoji">🏛️</span>Con il sistema
+      </button>
+    </div>
+
+    <div class="spacer" style="height:12px"></div>
+    <div class="section-label">Descrivi cosa è successo</div>
+    <div style="padding:0 16px">
+      <textarea class="journal-textarea" id="trigger-text" rows="4" placeholder="Es: Quando quel ragazzo ha risposto male davanti al gruppo, ho sentito..."></textarea>
+      <div style="margin-top:8px;font-size:0.75rem;color:var(--text-muted)">Poi ho reagito:</div>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="btn-secondary" id="react-attacco" onclick="selectReaction(this,'Attaccando')">😤 Attaccando</button>
+        <button class="btn-secondary" id="react-ritiro" onclick="selectReaction(this,'Ritirandomi')">🚪 Ritirandomi</button>
+        <button class="btn-secondary" id="react-congelato" onclick="selectReaction(this,'Bloccandomi')">🧊 Bloccandomi</button>
+        <button class="btn-secondary" id="react-compiacendo" onclick="selectReaction(this,'Compiacendo')">😶 Compiacendo</button>
+      </div>
+      <div style="margin-top:12px">
+        <button class="btn-primary" onclick="saveTrigger()">⚡ Aggiungi al diario trigger</button>
+      </div>
+    </div>
+
+    <div class="section-label">Diario trigger</div>
+    <div id="trigger-list" style="padding-bottom:16px"></div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ══════════════════ EDU BURNOUT ══════════════════ -->
+  <div class="screen" id="screen-edu-burnout">
+    <div class="topbar">
+      <div>
+        <div class="edu-badge">🔥 Burnout</div>
+        <h1>Monitor Burnout</h1>
+        <div class="subtitle">Maslach semplificato</div>
+      </div>
+    </div>
+
+    <div style="padding:0 16px 12px;font-size:0.8rem;color:var(--text-muted);line-height:1.6">
+      Il burnout non arriva all'improvviso — si costruisce nel tempo. Monitora le tre scale di Maslach per intercettarlo prima che si radichi.
+    </div>
+
+    <div class="burnout-meter" id="burnout-meter">
+
+      <div class="burnout-scale">
+        <div class="burnout-scale-header">
+          <div class="burnout-scale-name">😮‍💨 Esaurimento Emotivo</div>
+          <div class="burnout-indicator" id="bi-0" style="background:#34d399"></div>
+        </div>
+        <div class="goleman-question">Mi sento emotivamente svuotato dal mio lavoro con i ragazzi</div>
+        <input type="range" class="goleman-slider" min="1" max="10" value="3" oninput="updateBurnout(0, this.value)">
+        <div class="goleman-labels"><span>Per niente</span><span>Moltissimo</span></div>
+        <div class="burnout-bar-bg"><div class="burnout-bar-fill" id="bf-0" style="width:30%;background:#34d399"></div></div>
+        <div class="burnout-desc" id="bd-0">Livello basso — buona riserva energetica</div>
+      </div>
+
+      <div class="burnout-scale">
+        <div class="burnout-scale-header">
+          <div class="burnout-scale-name">🧊 Depersonalizzazione</div>
+          <div class="burnout-indicator" id="bi-1" style="background:#34d399"></div>
+        </div>
+        <div class="goleman-question">Mi ritrovo a trattare i ragazzi in modo distaccato o meccanico</div>
+        <input type="range" class="goleman-slider" min="1" max="10" value="3" oninput="updateBurnout(1, this.value)">
+        <div class="goleman-labels"><span>Per niente</span><span>Spesso</span></div>
+        <div class="burnout-bar-bg"><div class="burnout-bar-fill" id="bf-1" style="width:30%;background:#34d399"></div></div>
+        <div class="burnout-desc" id="bd-1">Livello basso — buona presenza relazionale</div>
+      </div>
+
+      <div class="burnout-scale">
+        <div class="burnout-scale-header">
+          <div class="burnout-scale-name">⭐ Realizzazione Personale</div>
+          <div class="burnout-indicator" id="bi-2" style="background:#34d399"></div>
+        </div>
+        <div class="goleman-question">Mi sento competente e realizzato nel mio ruolo educativo</div>
+        <input type="range" class="goleman-slider" min="1" max="10" value="7" oninput="updateBurnout(2, this.value)">
+        <div class="goleman-labels"><span>Per niente</span><span>Moltissimo</span></div>
+        <div class="burnout-bar-bg"><div class="burnout-bar-fill" id="bf-2" style="width:70%;background:#34d399"></div></div>
+        <div class="burnout-desc" id="bd-2">Buon livello — senso di efficacia presente</div>
+      </div>
+
+    </div>
+
+    <div style="padding:16px">
+      <div class="card" id="burnout-summary">
+        <div class="card-title">📊 Il tuo profilo attuale</div>
+        <div class="card-sub" id="burnout-summary-text">Compila le scale per vedere il tuo profilo.</div>
+      </div>
+      <div style="margin-top:10px;text-align:center">
+        <button class="btn-primary" onclick="saveBurnout()">💾 Salva monitoraggio</button>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ══════════════════ EDU STRATEGIE ══════════════════ -->
+  <div class="screen" id="screen-edu-strategie">
+    <div class="topbar">
+      <div>
+        <div class="edu-badge">🌿 Cura</div>
+        <h1>Strategie di Cura</h1>
+        <div class="subtitle">Regolazione per educatori</div>
+      </div>
+    </div>
+
+    <div style="padding:0 16px 10px;font-size:0.8rem;color:var(--text-muted);line-height:1.6">
+      Non è egoismo prendersi cura di sé — è prerequisito per prendersi cura degli altri.
+    </div>
+
+    <div class="section-label">Pratiche di regolazione</div>
+
+    <div class="strategy-card" onclick="toggleStrategy(this)">
+      <div class="sc-header">
+        <div class="sc-icon">📓</div>
+        <div class="sc-title">Journaling Riflessivo Strutturato</div>
+        <div class="sc-tag">10 min</div>
+      </div>
+      <div class="sc-desc">Scrittura guidata per processare le esperienze emotivamente intense della giornata educativa.</div>
+      <div class="sc-steps">
+        1. Descrivi un momento difficile di oggi in 3 righe<br>
+        2. Cosa ho sentito nel corpo in quel momento?<br>
+        3. Quale bisogno non soddisfatto c'era dietro?<br>
+        4. Come avrei voluto rispondere idealmente?<br>
+        5. Cosa porto con me da questa riflessione?
+      </div>
+    </div>
+
+    <div class="strategy-card" onclick="toggleStrategy(this)">
+      <div class="sc-header">
+        <div class="sc-icon">💙</div>
+        <div class="sc-title">Autocompassione (Neff)</div>
+        <div class="sc-tag">5 min</div>
+      </div>
+      <div class="sc-desc">Trattarti con la stessa gentilezza che useresti con un collega in difficoltà.</div>
+      <div class="sc-steps">
+        1. Riconosci: "Questo è un momento difficile" (mindfulness)<br>
+        2. Normalizza: "La sofferenza fa parte del lavoro educativo" (umanità condivisa)<br>
+        3. Offri gentilezza: metti una mano sul cuore e di' "Posso darti la gentilezza di cui hai bisogno?"<br>
+        4. Ripeti una frase di supporto verso te stesso
+      </div>
+    </div>
+
+    <div class="strategy-card" onclick="toggleStrategy(this)">
+      <div class="sc-header">
+        <div class="sc-icon">🍃</div>
+        <div class="sc-title">Defusion Cognitiva (ACT)</div>
+        <div class="sc-tag">3 min</div>
+      </div>
+      <div class="sc-desc">Distanziarsi dai pensieri automatici negativi per non esserne guidati inconsapevolmente.</div>
+      <div class="sc-steps">
+        1. Identifica il pensiero ricorrente (es: "Non riesco a gestire quel ragazzo")<br>
+        2. Aggiungi il prefisso: "Ho il pensiero che... non riesco a gestire quel ragazzo"<br>
+        3. Poi: "Noto che ho il pensiero che..."<br>
+        4. Osserva: il pensiero è ancora lì ma tu sei separato da esso<br>
+        5. Scegli l'azione in linea con i tuoi valori educativi
+      </div>
+    </div>
+
+    <div class="strategy-card" onclick="toggleStrategy(this)">
+      <div class="sc-header">
+        <div class="sc-icon">👥</div>
+        <div class="sc-title">Supervisione Emotiva tra Pari</div>
+        <div class="sc-tag">Settimanale</div>
+      </div>
+      <div class="sc-desc">Spazio strutturato con un collega fidato per condividere le fatiche della relazione educativa.</div>
+      <div class="sc-steps">
+        Struttura in 20 min:<br>
+        • 7 min — uno parla senza essere interrotto<br>
+        • 3 min — l'altro rispecchia solo quello che ha sentito<br>
+        • 7 min — si invertono i ruoli<br>
+        • 3 min — cosa portate via insieme<br><br>
+        Regole: niente consigli non richiesti, niente giudizi
+      </div>
+    </div>
+
+    <div class="strategy-card" onclick="toggleStrategy(this)">
+      <div class="sc-header">
+        <div class="sc-icon">🌊</div>
+        <div class="sc-title">Decompressione Post-Turno</div>
+        <div class="sc-tag">Quotidiana</div>
+      </div>
+      <div class="sc-desc">Un rituale di transizione tra il tempo-lavoro e il tempo-personale per non portare a casa il carico emotivo.</div>
+      <div class="sc-steps">
+        Prima di uscire dal lavoro:<br>
+        1. 3 respiri profondi (usa la sezione Respira)<br>
+        2. Scrivi UNA cosa positiva della giornata<br>
+        3. Lascia simbolicamente il carico: "Quello che è successo oggi rimane qui"<br>
+        4. Cambia un elemento fisico (togliti il badge, cambia scarpe, lavatevi le mani)<br>
+        5. Cammina 5 minuti prima di salire in auto/bus
+      </div>
+    </div>
+
+    <div class="strategy-card" onclick="toggleStrategy(this)">
+      <div class="sc-header">
+        <div class="sc-icon">🎯</div>
+        <div class="sc-title">Riorientamento ai Valori</div>
+        <div class="sc-tag">Mensile</div>
+      </div>
+      <div class="sc-desc">Riconnettersi al "perché" profondo della scelta educativa quando la motivazione cala.</div>
+      <div class="sc-steps">
+        Rispondi per iscritto:<br>
+        1. Perché ho scelto questo lavoro all'inizio?<br>
+        2. Qual è il momento in cui ho sentito di fare davvero la differenza?<br>
+        3. Cosa voglio che i ragazzi ricordino di me tra 10 anni?<br>
+        4. Cosa mi dice questo dei miei valori profondi?<br>
+        5. Cosa posso fare questa settimana in linea con essi?
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+  </div>
+
+
   <!-- ── BOTTOM NAV ── -->
   <nav class="bottom-nav">
     <button class="nav-btn active" onclick="navigate('home',this)" id="nav-home" aria-label="Casa - Schermata principale">
@@ -1735,6 +2501,54 @@
         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
       </svg>
       Diario
+      <div class="nav-dot"></div>
+    </button>
+  </nav>
+
+  <!-- EDU NAV (visibile solo in modalità educatore) -->
+  <nav class="bottom-nav hidden" id="edu-nav" style="display:none">
+    <button class="nav-btn active" onclick="navigate('edu-home',this)" id="edu-nav-home" aria-label="Home educatore">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      Casa
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="navigate('edu-goleman',this)" id="edu-nav-goleman" aria-label="Intelligenza emotiva">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+      </svg>
+      IE
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="navigate('edu-at',this)" id="edu-nav-at" aria-label="Analisi transazionale">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      AT
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="navigate('edu-trigger',this)" id="edu-nav-trigger" aria-label="Trigger">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+      </svg>
+      Trigger
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="navigate('edu-burnout',this)" id="edu-nav-burnout" aria-label="Burnout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2zm0-10h2v8h-2z"/>
+      </svg>
+      Burnout
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="navigate('edu-strategie',this)" id="edu-nav-strategie" aria-label="Strategie">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      Cura
       <div class="nav-dot"></div>
     </button>
   </nav>
@@ -2427,10 +3241,18 @@ function init() {
   resetBreathing();
   document.getElementById('tech-description').innerHTML = TECHNIQUES['box'].desc;
 
-  // Onboarding e GDPR al primo avvio
-  if (!localStorage.getItem('ondamia_onboarded')) {
+  // Profilo, onboarding e GDPR al primo avvio
+  const savedProfile = localStorage.getItem('ondamia_profile');
+  if (savedProfile) {
+    currentProfile = savedProfile;
+    applyProfile(savedProfile);
+  } else {
+    // Prima volta: mostra selezione profilo
+    setTimeout(() => document.getElementById('profile-overlay').classList.remove('hidden'), 300);
+  }
+  if (savedProfile && !localStorage.getItem('ondamia_onboarded')) {
     setTimeout(() => showOnboarding(), 600);
-  } else if (!localStorage.getItem('ondamia_gdpr')) {
+  } else if (savedProfile && !localStorage.getItem('ondamia_gdpr')) {
     setTimeout(() => {
       document.getElementById('gdpr-banner').classList.remove('hidden');
     }, 800);
@@ -2728,6 +3550,381 @@ document.getElementById('gdpr-banner') && document.getElementById('gdpr-banner')
     // Nessun trap necessario con un solo bottone
   }
 });
+
+
+
+// ══════════════════════════════════════════
+//  PROFILO (Giovane / Educatore)
+// ══════════════════════════════════════════
+let currentProfile = 'giovane';
+
+function selectProfile(profile) {
+  currentProfile = profile;
+  localStorage.setItem('ondamia_profile', profile);
+  document.getElementById('profile-overlay').classList.add('hidden');
+  applyProfile(profile);
+  if (!localStorage.getItem('ondamia_gdpr')) {
+    setTimeout(() => document.getElementById('gdpr-banner').classList.remove('hidden'), 400);
+  }
+}
+
+function applyProfile(profile) {
+  const mainNav = document.querySelector('.bottom-nav:not(#edu-nav)');
+  const eduNav = document.getElementById('edu-nav');
+  // Nascondi tutte le schermate
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+  if (profile === 'educatore') {
+    mainNav.style.display = 'none';
+    eduNav.style.display = 'flex';
+    document.getElementById('screen-edu-home').classList.add('active');
+    document.getElementById('edu-nav-home').classList.add('active');
+    refreshEduHome();
+  } else {
+    mainNav.style.display = 'flex';
+    eduNav.style.display = 'none';
+    document.getElementById('screen-home').classList.add('active');
+    document.getElementById('nav-home').classList.add('active');
+    refreshHome();
+  }
+}
+
+function switchProfile() {
+  const newProfile = currentProfile === 'giovane' ? 'educatore' : 'giovane';
+  selectProfile(newProfile);
+}
+
+// Override navigate per gestire entrambi i profili
+const _originalNavigate = navigate;
+function navigate(screen, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  // Deseleziona tutti i nav btn
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+  const screenEl = document.getElementById('screen-' + screen);
+  if (screenEl) screenEl.classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  STATE.currentScreen = screen;
+
+  // Callback per schermata attivata
+  if (screen === 'home') refreshHome();
+  if (screen === 'journal') refreshReframing();
+  if (screen === 'box') refreshBox();
+  if (screen === 'diary') renderDiary();
+  if (screen === 'meta') refreshMeta();
+  if (screen === 'reg') resetBreathing();
+  if (screen === 'edu-home') refreshEduHome();
+  if (screen === 'edu-goleman') drawRadar();
+  if (screen === 'edu-trigger') renderTriggers();
+}
+
+// ══════════════════════════════════════════
+//  EDU HOME
+// ══════════════════════════════════════════
+function refreshEduHome() {
+  const db = loadEduDB();
+  document.getElementById('edu-checks-count').textContent = db.checks || 0;
+  document.getElementById('edu-streak').textContent = db.streak || 0;
+  // Semaforo burnout
+  const bl = db.lastBurnout;
+  let semaforo = '🟢';
+  if (bl) {
+    const score = (bl[0] + bl[1]) / 2 - bl[2] / 2;
+    if (score > 5) semaforo = '🔴';
+    else if (score > 3) semaforo = '🟡';
+  }
+  document.getElementById('edu-burnout-level').textContent = semaforo;
+}
+
+function eduQuickMood(el, mood, emoji) {
+  document.querySelectorAll('#edu-mood-row .mood-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const db = loadEduDB();
+  db.moods = db.moods || [];
+  db.moods.push({ ts: Date.now(), mood, emoji });
+  db.checks = (db.checks || 0) + 1;
+  saveEduDB(db);
+  showToast('Umore registrato 🌿');
+}
+
+// ══════════════════════════════════════════
+//  EDU DATABASE
+// ══════════════════════════════════════════
+const EDU_KEY = 'ondamia_edu_data';
+function loadEduDB() {
+  try { return JSON.parse(localStorage.getItem(EDU_KEY)) || {}; } catch { return {}; }
+}
+function saveEduDB(db) { localStorage.setItem(EDU_KEY, JSON.stringify(db)); }
+
+// ══════════════════════════════════════════
+//  GOLEMAN
+// ══════════════════════════════════════════
+const golemanScores = [5, 5, 5, 5, 5];
+
+function updateGoleman(idx, val) {
+  golemanScores[idx] = parseInt(val);
+  document.getElementById('score-' + idx).textContent = val;
+  drawRadar();
+}
+
+function drawRadar() {
+  const canvas = document.getElementById('goleman-radar');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2;
+  const R = Math.min(W, H) / 2 - 30;
+  const labels = ['Autoconsapevolezza', 'Autoregolazione', 'Motivazione', 'Empatia', 'Abilità Sociali'];
+  const N = labels.length;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Griglia
+  for (let level = 2; level <= 10; level += 2) {
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(192,132,252,0.1)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < N; i++) {
+      const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+      const r = R * level / 10;
+      const x = cx + r * Math.cos(angle);
+      const y = cy + r * Math.sin(angle);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  // Assi
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(192,132,252,0.2)';
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(angle), cy + R * Math.sin(angle));
+    ctx.stroke();
+  }
+
+  // Poligono dati
+  ctx.beginPath();
+  ctx.fillStyle = 'rgba(192,132,252,0.25)';
+  ctx.strokeStyle = '#c084fc';
+  ctx.lineWidth = 2;
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    const r = R * golemanScores[i] / 10;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Punti
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    const r = R * golemanScores[i] / 10;
+    ctx.beginPath();
+    ctx.arc(cx + r * Math.cos(angle), cy + r * Math.sin(angle), 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#c084fc';
+    ctx.fill();
+  }
+
+  // Labels
+  ctx.fillStyle = '#8b87b0';
+  ctx.font = '10px DM Sans, sans-serif';
+  ctx.textAlign = 'center';
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    const r = R + 18;
+    ctx.fillText(labels[i].split(' ')[0], cx + r * Math.cos(angle), cy + r * Math.sin(angle) + 4);
+  }
+}
+
+function saveGoleman() {
+  const db = loadEduDB();
+  db.goleman = db.goleman || [];
+  db.goleman.push({ ts: Date.now(), scores: [...golemanScores] });
+  db.checks = (db.checks || 0) + 1;
+  saveEduDB(db);
+  showToast('🧠 Profilo emotivo salvato!');
+}
+
+// ══════════════════════════════════════════
+//  ANALISI TRANSAZIONALE
+// ══════════════════════════════════════════
+const AT_DATA = {
+  'genitore-critico': {
+    title: '👆 Genitore Critico',
+    desc: 'Stai operando da uno stato di giudizio, regole e aspettative rigide. Utile per mantenere la struttura, ma può creare distanza.',
+    reflection: 'Chiediti: "Sto giudicando questo ragazzo o la situazione? Cosa succederebbe se adottassi una postura più curiosa che valutativa?"'
+  },
+  'genitore-nutritivo': {
+    title: '🤗 Genitore Nutritivo',
+    desc: 'Sei in uno stato di cura e protezione. Prezioso per i ragazzi, ma attenzione all'over-caring che può sfociare in burnout.',
+    reflection: 'Chiediti: "Sto dando o mi sto svuotando? Sto permettendo ai ragazzi di sviluppare autonomia o li sto rendendo dipendenti?"'
+  },
+  'adulto': {
+    title: '⚖️ Adulto',
+    desc: 'Operi da uno stato di analisi razionale e obiettività. È lo stato più funzionale per la risoluzione dei problemi educativi.',
+    reflection: 'Ottimo equilibrio. Chiediti: "Sto includendo anche la dimensione emotiva nelle mie valutazioni, o rimango solo sul piano razionale?"'
+  },
+  'bambino-adattato': {
+    title: '😟 Bambino Adattato',
+    desc: 'Stai cercando approvazione o evitando conflitti. Segnale che qualcosa nel contesto ti fa sentire insicuro o non abbastanza.',
+    reflection: 'Chiediti: "Di chi sto cercando l'approvazione? Cosa ho paura che succeda se esprimo il mio punto di vista autentico?"'
+  },
+  'bambino-libero': {
+    title: '🎉 Bambino Libero',
+    desc: 'Sei spontaneo, creativo e autentico. Risorsa preziosa per la relazione educativa — i ragazzi lo percepiscono.',
+    reflection: 'Chiediti: "Come posso portare questa energia creativa nel gruppo mantenendo comunque la struttura necessaria?"'
+  }
+};
+
+function selectATState(btn, state) {
+  document.querySelectorAll('.at-state-card').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  STATE.selectedAT = state;
+  const data = AT_DATA[state];
+  document.getElementById('at-result-title').textContent = data.title;
+  document.getElementById('at-result-desc').textContent = data.desc;
+  document.getElementById('at-result-reflection').textContent = data.reflection;
+  document.getElementById('at-result-section').style.display = 'block';
+  document.getElementById('at-result-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function saveATState() {
+  if (!STATE.selectedAT) return;
+  const db = loadEduDB();
+  db.at = db.at || [];
+  db.at.push({ ts: Date.now(), state: STATE.selectedAT });
+  db.checks = (db.checks || 0) + 1;
+  saveEduDB(db);
+  showToast('🔄 Riflessione AT salvata!');
+}
+
+// ══════════════════════════════════════════
+//  TRIGGER
+// ══════════════════════════════════════════
+STATE.selectedTriggerCtx = null;
+STATE.selectedReaction = null;
+
+function selectTriggerCtx(btn, ctx) {
+  document.querySelectorAll('[id^="trig-ctx-"]').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  STATE.selectedTriggerCtx = ctx;
+}
+
+function selectReaction(btn, reaction) {
+  document.querySelectorAll('[id^="react-"]').forEach(b => b.style.borderColor = '');
+  btn.style.borderColor = 'var(--accent)';
+  STATE.selectedReaction = reaction;
+}
+
+function saveTrigger() {
+  const text = document.getElementById('trigger-text').value.trim();
+  if (!text) { showToast('Descrivi cosa è successo!'); return; }
+  const db = loadEduDB();
+  db.triggers = db.triggers || [];
+  db.triggers.push({
+    ts: Date.now(),
+    ctx: STATE.selectedTriggerCtx || 'Non specificato',
+    text: text,
+    reaction: STATE.selectedReaction || 'Non specificata'
+  });
+  saveEduDB(db);
+  document.getElementById('trigger-text').value = '';
+  STATE.selectedTriggerCtx = null;
+  STATE.selectedReaction = null;
+  document.querySelectorAll('[id^="trig-ctx-"]').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('[id^="react-"]').forEach(b => b.style.borderColor = '');
+  renderTriggers();
+  showToast('⚡ Trigger registrato!');
+}
+
+function renderTriggers() {
+  const db = loadEduDB();
+  const list = document.getElementById('trigger-list');
+  if (!list) return;
+  const triggers = (db.triggers || []).slice().reverse();
+  if (triggers.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:0.8rem">Nessun trigger registrato ancora.</div>';
+    return;
+  }
+  list.innerHTML = triggers.slice(0, 10).map(t => {
+    const date = new Date(t.ts).toLocaleString('it-IT', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    return '<div class="trigger-item">'
+      + '<div class="ti-context">📍 ' + t.ctx + ' · ' + (t.reaction || '') + '</div>'
+      + '<div class="ti-text">' + t.text.substring(0, 120) + '</div>'
+      + '<div class="ti-time">🕐 ' + date + '</div></div>';
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  BURNOUT
+// ══════════════════════════════════════════
+const burnoutValues = [3, 3, 7];
+
+function updateBurnout(idx, val) {
+  burnoutValues[idx] = parseInt(val);
+  const v = parseInt(val);
+  const pct = v * 10;
+  // Colore semaforo
+  let color, desc;
+  if (idx === 2) {
+    // Realizzazione: invertito (basso = male)
+    color = v >= 7 ? '#34d399' : v >= 4 ? '#fbbf24' : '#f87171';
+    desc = v >= 7 ? 'Buon livello — senso di efficacia presente' : v >= 4 ? 'Attenzione — senso di efficacia in calo' : 'Critico — senso di inefficacia elevato';
+  } else {
+    color = v <= 3 ? '#34d399' : v <= 6 ? '#fbbf24' : '#f87171';
+    desc = v <= 3 ? 'Livello basso — bene' : v <= 6 ? 'Livello moderato — monitorare' : 'Livello alto — intervenire';
+  }
+  document.getElementById('bi-' + idx).style.background = color;
+  document.getElementById('bf-' + idx).style.width = pct + '%';
+  document.getElementById('bf-' + idx).style.background = color;
+  document.getElementById('bd-' + idx).textContent = desc;
+  updateBurnoutSummary();
+}
+
+function updateBurnoutSummary() {
+  const [esaur, depers, realiz] = burnoutValues;
+  let risk = 'basso';
+  let msg = '';
+  let emoji = '🟢';
+  if (esaur >= 7 || depers >= 7 || realiz <= 3) {
+    risk = 'alto'; emoji = '🔴';
+    msg = 'Segnali significativi di burnout. È importante che tu parli con un professionista o supervisore. Non sei solo/a.';
+  } else if (esaur >= 5 || depers >= 5 || realiz <= 5) {
+    risk = 'moderato'; emoji = '🟡';
+    msg = 'Attenzione: alcuni segnali di affaticamento emotivo. Priorità alle strategie di cura e ai confini professionali.';
+  } else {
+    msg = 'Buon equilibrio generale. Continua a prenderti cura di te con costanza.';
+  }
+  document.getElementById('burnout-summary-text').innerHTML =
+    emoji + ' Rischio <strong>' + risk + '</strong>. ' + msg;
+}
+
+function saveBurnout() {
+  const db = loadEduDB();
+  db.burnout = db.burnout || [];
+  db.burnout.push({ ts: Date.now(), values: [...burnoutValues] });
+  db.lastBurnout = [...burnoutValues];
+  db.checks = (db.checks || 0) + 1;
+  saveEduDB(db);
+  refreshEduHome();
+  showToast('🔥 Monitoraggio burnout salvato!');
+}
+
+// ══════════════════════════════════════════
+//  STRATEGIE
+// ══════════════════════════════════════════
+function toggleStrategy(card) {
+  const wasExpanded = card.classList.contains('expanded');
+  document.querySelectorAll('.strategy-card').forEach(c => c.classList.remove('expanded'));
+  if (!wasExpanded) card.classList.add('expanded');
+}
 
 
 </script>
