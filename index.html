@@ -2508,6 +2508,50 @@
     </button>
   </nav>
 
+
+  <!-- ══════════════════ EDU DIARIO ══════════════════ -->
+  <div class="screen" id="screen-edu-diary">
+    <div class="topbar">
+      <div>
+        <div class="edu-badge">📖 Storico</div>
+        <h1>Il Mio Storico</h1>
+        <div class="subtitle">Tutte le voci salvate</div>
+      </div>
+      <button class="btn-secondary" onclick="clearEduDiarySelected()" style="font-size:0.7rem;padding:6px 12px" id="edu-diary-del-btn" style="display:none">🗑️ Elimina</button>
+    </div>
+
+    <div style="padding:0 16px 8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px" id="edu-diary-filter-row">
+        <button class="tech-tab active" onclick="filterEduDiary(this,'all')">Tutte</button>
+        <button class="tech-tab" onclick="filterEduDiary(this,'mood')">😊 Mood</button>
+        <button class="tech-tab" onclick="filterEduDiary(this,'goleman')">🧠 IE</button>
+        <button class="tech-tab" onclick="filterEduDiary(this,'at')">🔄 AT</button>
+        <button class="tech-tab" onclick="filterEduDiary(this,'trigger')">⚡ Trigger</button>
+        <button class="tech-tab" onclick="filterEduDiary(this,'burnout')">🔥 Burnout</button>
+      </div>
+
+      <!-- Barra selezione -->
+      <div id="edu-diary-select-bar" style="display:none;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:10px;flex-wrap:wrap;gap:8px;align-items:center">
+        <button onclick="eduSelectAll()" style="background:none;border:1px solid var(--border);border-radius:20px;padding:4px 12px;color:var(--text);font-size:0.75rem;cursor:pointer">✅ Tutte</button>
+        <button onclick="eduDeselectAll()" style="background:none;border:1px solid var(--border);border-radius:20px;padding:4px 12px;color:var(--text);font-size:0.75rem;cursor:pointer">⬜ Nessuna</button>
+        <span id="edu-selected-count" style="font-size:0.75rem;color:var(--accent);flex:1">0 selezionate</span>
+        <button onclick="deleteEduSelected()" class="btn-primary" style="padding:6px 14px;font-size:0.75rem;background:linear-gradient(135deg,var(--danger),#dc2626)">🗑️ Elimina</button>
+        <button onclick="toggleEduSelect()" style="background:none;border:none;color:var(--text-muted);font-size:0.8rem;cursor:pointer">✕</button>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+        <button class="profile-switcher" onclick="toggleEduSelect()" id="edu-select-btn">☑️ Seleziona</button>
+      </div>
+
+      <div id="edu-diary-list" style="display:flex;flex-direction:column;gap:10px;padding-bottom:20px"></div>
+      <div id="edu-diary-empty" style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;display:none">
+        <div style="font-size:2.5rem;margin-bottom:10px">📭</div>
+        Nessuna voce ancora.<br>Inizia con un check-up!
+      </div>
+    </div>
+  </div>
+
+
   <!-- EDU NAV (visibile solo in modalità educatore) -->
   <nav class="bottom-nav hidden" id="edu-nav" style="display:none">
     <button class="nav-btn active" onclick="navigate('edu-home',this)" id="edu-nav-home" aria-label="Home educatore">
@@ -2552,6 +2596,14 @@
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
       </svg>
       Cura
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="navigate('edu-diary',this)" id="edu-nav-diary" aria-label="Storico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+      </svg>
+      Storico
       <div class="nav-dot"></div>
     </button>
   </nav>
@@ -2622,6 +2674,7 @@ function navigate(screen, btn) {
   if (screen === 'edu-home') refreshEduHome();
   if (screen === 'edu-goleman') drawRadar();
   if (screen === 'edu-trigger') renderTriggers();
+  if (screen === 'edu-diary') renderEduDiary();
 }
 
 function goToBreathing() {
@@ -3914,6 +3967,136 @@ function toggleStrategy(card) {
   const wasExpanded = card.classList.contains('expanded');
   document.querySelectorAll('.strategy-card').forEach(c => c.classList.remove('expanded'));
   if (!wasExpanded) card.classList.add('expanded');
+}
+
+
+
+// ══════════════════════════════════════════
+//  EDU DIARIO
+// ══════════════════════════════════════════
+let eduDiaryFilter = 'all';
+let eduSelectMode = false;
+let eduSelected = new Set();
+
+function filterEduDiary(btn, type) {
+  document.querySelectorAll('#edu-diary-filter-row .tech-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  eduDiaryFilter = type;
+  renderEduDiary();
+}
+
+function toggleEduSelect() {
+  eduSelectMode = !eduSelectMode;
+  eduSelected.clear();
+  const bar = document.getElementById('edu-diary-select-bar');
+  const btn = document.getElementById('edu-select-btn');
+  if (eduSelectMode) {
+    bar.style.display = 'flex';
+    btn.textContent = '✕ Esci';
+  } else {
+    bar.style.display = 'none';
+    btn.textContent = '☑️ Seleziona';
+  }
+  renderEduDiary();
+}
+
+function eduSelectAll() {
+  const entries = getEduEntries();
+  entries.forEach(e => eduSelected.add(e._key + '_' + e.ts));
+  updateEduSelectCount();
+  renderEduDiary();
+}
+
+function eduDeselectAll() {
+  eduSelected.clear();
+  updateEduSelectCount();
+  renderEduDiary();
+}
+
+function updateEduSelectCount() {
+  const el = document.getElementById('edu-selected-count');
+  if (el) el.textContent = eduSelected.size + ' selezionate';
+}
+
+function toggleEduItem(key) {
+  if (eduSelected.has(key)) eduSelected.delete(key);
+  else eduSelected.add(key);
+  updateEduSelectCount();
+  renderEduDiary();
+}
+
+function deleteEduSelected() {
+  if (eduSelected.size === 0) { showToast('Seleziona almeno una voce!'); return; }
+  if (!confirm('Eliminare ' + eduSelected.size + ' voce/i?')) return;
+  const db = loadEduDB();
+  // Rimuovi da ogni categoria
+  eduSelected.forEach(key => {
+    const [type, ts] = key.split('_');
+    const tsNum = parseInt(ts);
+    if (db[type]) db[type] = db[type].filter(e => e.ts !== tsNum);
+  });
+  saveEduDB(db);
+  eduSelected.clear();
+  updateEduSelectCount();
+  renderEduDiary();
+  refreshEduHome();
+  showToast('🗑️ Voci eliminate!');
+}
+
+function getEduEntries() {
+  const db = loadEduDB();
+  let entries = [];
+  // Mood
+  (db.moods || []).forEach(e => entries.push({ _key: 'moods', ts: e.ts, type: 'mood', emoji: e.emoji, title: 'Mood: ' + e.mood, desc: '' }));
+  // Goleman
+  (db.goleman || []).forEach(e => {
+    const avg = (e.scores.reduce((a,b) => a+b, 0) / e.scores.length).toFixed(1);
+    entries.push({ _key: 'goleman', ts: e.ts, type: 'goleman', emoji: '🧠', title: 'Profilo IE', desc: 'Media: ' + avg + '/10 — ' + ['Autoconsapevolezza','Autoregolazione','Motivazione','Empatia','Abilità Sociali'].map((l,i) => l.split(' ')[0]+': '+e.scores[i]).join(', ') });
+  });
+  // AT
+  (db.at || []).forEach(e => entries.push({ _key: 'at', ts: e.ts, type: 'at', emoji: '🔄', title: 'Stato AT: ' + e.state.replace(/-/g,' '), desc: '' }));
+  // Trigger
+  (db.triggers || []).forEach(e => entries.push({ _key: 'triggers', ts: e.ts, type: 'trigger', emoji: '⚡', title: 'Trigger: ' + e.ctx, desc: e.text.substring(0, 100) }));
+  // Burnout
+  (db.burnout || []).forEach(e => {
+    const [es, dep, real] = e.values;
+    const risk = (es >= 7 || dep >= 7 || real <= 3) ? '🔴 Alto' : (es >= 5 || dep >= 5 || real <= 5) ? '🟡 Moderato' : '🟢 Basso';
+    entries.push({ _key: 'burnout', ts: e.ts, type: 'burnout', emoji: '🔥', title: 'Monitor Burnout', desc: 'Rischio: ' + risk + ' — Esaur: '+es+' Deperso: '+dep+' Realiz: '+real });
+  });
+  // Filtra
+  if (eduDiaryFilter !== 'all') entries = entries.filter(e => e.type === eduDiaryFilter);
+  return entries.sort((a, b) => b.ts - a.ts);
+}
+
+function renderEduDiary() {
+  const list = document.getElementById('edu-diary-list');
+  const empty = document.getElementById('edu-diary-empty');
+  if (!list) return;
+  const entries = getEduEntries();
+  if (entries.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  const typeColors = { mood:'var(--accent)', goleman:'#60a5fa', at:'#34d399', trigger:'var(--danger)', burnout:'var(--warm)' };
+
+  list.innerHTML = entries.map(e => {
+    const date = new Date(e.ts).toLocaleString('it-IT', { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+    const key = e._key + '_' + e.ts;
+    const isSelected = eduSelected.has(key);
+    const checkHtml = eduSelectMode
+      ? '<div onclick="toggleEduItem('' + key + '')" style="flex-shrink:0;width:24px;height:24px;border-radius:6px;border:2px solid '+(isSelected?'var(--accent)':'var(--border)')+';background:'+(isSelected?'var(--accent)':'transparent')+';display:flex;align-items:center;justify-content:center;cursor:pointer">'+(isSelected?'<span style="color:white;font-size:0.8rem">✓</span>':'')+'</div>'
+      : '';
+    return '<div onclick="'+(eduSelectMode?'toggleEduItem(''+key+'')':'')+'" style="background:var(--card);border:1px solid '+(isSelected&&eduSelectMode?'var(--accent)':'var(--border)')+';border-left:3px solid '+(typeColors[e.type]||'var(--accent)')+';border-radius:0 14px 14px 0;padding:14px;display:flex;gap:10px;align-items:flex-start;cursor:'+(eduSelectMode?'pointer':'default')+'">'
+      + checkHtml
+      + '<div style="font-size:1.5rem;flex-shrink:0">' + e.emoji + '</div>'
+      + '<div style="flex:1;min-width:0">'
+      + '<div style="font-size:0.88rem;font-weight:500;margin-bottom:2px">' + e.title + '</div>'
+      + (e.desc ? '<div style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">' + e.desc + '</div>' : '')
+      + '<div style="font-size:0.65rem;color:var(--text-muted)">🕐 ' + date + '</div>'
+      + '</div></div>';
+  }).join('');
 }
 
 
