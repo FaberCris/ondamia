@@ -2166,7 +2166,7 @@
     </div>
 
     <div class="section-label">I tre stati dell'Io</div>
-    <div class="at-states" id="at-states-row">
+    <div class="at-states" id="at-states-row" style="cursor:grab">
       <div class="at-state-card" onclick="selectATState(this, 'genitore-critico')" id="at-gc">
         <div class="as-icon">👆</div>
         <div class="as-name">Genitore Critico</div>
@@ -3249,17 +3249,15 @@ function init() {
   const savedProfile = localStorage.getItem('ondamia_profile');
   if (savedProfile) {
     currentProfile = savedProfile;
+    // Applica profilo salvato nascondendo prima lo schermo di selezione
+    document.getElementById('profile-overlay').classList.add('hidden');
     applyProfile(savedProfile);
+    if (!localStorage.getItem('ondamia_gdpr')) {
+      setTimeout(() => document.getElementById('gdpr-banner').classList.remove('hidden'), 800);
+    }
   } else {
-    // Prima volta: mostra selezione profilo
-    setTimeout(() => document.getElementById('profile-overlay').classList.remove('hidden'), 300);
-  }
-  if (savedProfile && !localStorage.getItem('ondamia_onboarded')) {
-    setTimeout(() => showOnboarding(), 600);
-  } else if (savedProfile && !localStorage.getItem('ondamia_gdpr')) {
-    setTimeout(() => {
-      document.getElementById('gdpr-banner').classList.remove('hidden');
-    }, 800);
+    // Prima volta: mostra selezione profilo dopo breve delay
+    setTimeout(() => document.getElementById('profile-overlay').classList.remove('hidden'), 400);
   }
 
   // streak update
@@ -3446,7 +3444,7 @@ function enableDragScroll(el) {
 
 // Attiva drag-scroll su tutte le righe orizzontali
 document.addEventListener('DOMContentLoaded', () => {
-  ['mood-row','emoji-picker','avatar-row','technique-tabs','color-row'].forEach(id => {
+  ['mood-row','emoji-picker','avatar-row','technique-tabs','color-row','at-states-row'].forEach(id => {
     // per id
     const byId = document.getElementById(id);
     if (byId) enableDragScroll(byId);
@@ -3575,27 +3573,33 @@ function selectProfile(profile) {
 function applyProfile(profile) {
   const mainNav = document.querySelector('.bottom-nav:not(#edu-nav)');
   const eduNav = document.getElementById('edu-nav');
+  // Nascondi overlay selezione
+  document.getElementById('profile-overlay').classList.add('hidden');
   // Nascondi tutte le schermate
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  // Deseleziona tutti i nav btn
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
 
   if (profile === 'educatore') {
     mainNav.style.display = 'none';
     eduNav.style.display = 'flex';
     document.getElementById('screen-edu-home').classList.add('active');
-    document.getElementById('edu-nav-home').classList.add('active');
+    const homeBtn = document.getElementById('edu-nav-home');
+    if (homeBtn) homeBtn.classList.add('active');
     refreshEduHome();
   } else {
     mainNav.style.display = 'flex';
     eduNav.style.display = 'none';
     document.getElementById('screen-home').classList.add('active');
-    document.getElementById('nav-home').classList.add('active');
+    const homeBtn = document.getElementById('nav-home');
+    if (homeBtn) homeBtn.classList.add('active');
     refreshHome();
   }
 }
 
 function switchProfile() {
-  const newProfile = currentProfile === 'giovane' ? 'educatore' : 'giovane';
-  selectProfile(newProfile);
+  // Mostra la schermata di selezione profilo invece di cambiare direttamente
+  document.getElementById('profile-overlay').classList.remove('hidden');
 }
 
 // Navigate esteso per gestire anche le schermate educatore
