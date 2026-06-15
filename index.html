@@ -2606,7 +2606,8 @@ function saveDB(db) {
 function navigate(screen, btn) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('screen-' + screen).classList.add('active');
+  const screenEl = document.getElementById('screen-' + screen);
+  if (screenEl) screenEl.classList.add('active');
   if (btn) btn.classList.add('active');
   STATE.currentScreen = screen;
   if (screen === 'home') refreshHome();
@@ -2615,6 +2616,9 @@ function navigate(screen, btn) {
   if (screen === 'diary') renderDiary();
   if (screen === 'meta') refreshMeta();
   if (screen === 'reg') resetBreathing();
+  if (screen === 'edu-home') refreshEduHome();
+  if (screen === 'edu-goleman') drawRadar();
+  if (screen === 'edu-trigger') renderTriggers();
 }
 
 function goToBreathing() {
@@ -3594,30 +3598,9 @@ function switchProfile() {
   selectProfile(newProfile);
 }
 
-// Override navigate per gestire entrambi i profili
-const _originalNavigate = navigate;
-function navigate(screen, btn) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  // Deseleziona tutti i nav btn
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+// Navigate esteso per gestire anche le schermate educatore
+// (sovrascrive la versione precedente definita prima)
 
-  const screenEl = document.getElementById('screen-' + screen);
-  if (screenEl) screenEl.classList.add('active');
-  if (btn) btn.classList.add('active');
-
-  STATE.currentScreen = screen;
-
-  // Callback per schermata attivata
-  if (screen === 'home') refreshHome();
-  if (screen === 'journal') refreshReframing();
-  if (screen === 'box') refreshBox();
-  if (screen === 'diary') renderDiary();
-  if (screen === 'meta') refreshMeta();
-  if (screen === 'reg') resetBreathing();
-  if (screen === 'edu-home') refreshEduHome();
-  if (screen === 'edu-goleman') drawRadar();
-  if (screen === 'edu-trigger') renderTriggers();
-}
 
 // ══════════════════════════════════════════
 //  EDU HOME
@@ -3763,7 +3746,7 @@ const AT_DATA = {
   },
   'genitore-nutritivo': {
     title: '🤗 Genitore Nutritivo',
-    desc: 'Sei in uno stato di cura e protezione. Prezioso per i ragazzi, ma attenzione all'over-caring che può sfociare in burnout.',
+    desc: 'Sei in uno stato di cura e protezione. Prezioso per i ragazzi, ma attenzione all\u2019over-caring che può sfociare in burnout.',
     reflection: 'Chiediti: "Sto dando o mi sto svuotando? Sto permettendo ai ragazzi di sviluppare autonomia o li sto rendendo dipendenti?"'
   },
   'adulto': {
