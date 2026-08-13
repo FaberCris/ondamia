@@ -1,6 +1,7 @@
 {
   "name": "OndaMia — Diario Emozionale",
   "short_name": "OndaMia",
+  "id": "/ondamia/",
   "description": "Diario Emozionale Interattivo per adolescenti. Esplora le tue emozioni attraverso la mappa corporea, respira, scrivi e deposita i tuoi pensieri.",
   "start_url": "./index.html",
   "scope": "./",
@@ -58,14 +59,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "./screenshots/home.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "label": "Home — OndaMia"
     }
   ],
   "shortcuts": [
