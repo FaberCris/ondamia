@@ -22,14 +22,14 @@
     { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
   "screenshots": [
-    { "src": "./screenshots/1.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Home — OndaMia" },
-    { "src": "./screenshots/2.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Mappa Corporea" },
-    { "src": "./screenshots/3.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Sagoma interattiva" },
-    { "src": "./screenshots/4.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Meta-Emozioni" },
-    { "src": "./screenshots/5.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Respirazione guidata" },
-    { "src": "./screenshots/6.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Intelligenza Emotiva" },
-    { "src": "./screenshots/7.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Trigger" },
-    { "src": "./screenshots/8.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Storico educatore" }
+    { "src": "./screenshots/1.jpg", "sizes": "1080x2400", "type": "image/jpeg", "form_factor": "narrow", "label": "Home — OndaMia" },
+    { "src": "./screenshots/2.jpg", "sizes": "1080x2400", "type": "image/jpeg", "form_factor": "narrow", "label": "Mappa Corporea" },
+    { "src": "./screenshots/3.jpg", "sizes": "1080x2400", "type": "image/jpeg", "form_factor": "narrow", "label": "Sagoma interattiva" },
+    { "src": "./screenshots/4.jpg", "sizes": "1080x2400", "type": "image/jpeg", "form_factor": "narrow", "label": "Meta-Emozioni" },
+    { "src": "./screenshots/5.jpg", "sizes": "1080x2400", "type": "image/jpeg", "form_factor": "narrow", "label": "Respirazione guidata" },
+    { "src": "./screenshots/6.jpg", "sizes": "1080x2400", "type": "image/jpeg", "form_factor": "narrow", "label": "Intelligenza Emotiva" },
+    { "src": "./screenshots/7.jpg", "sizes": "1080x2400", "type": "image/jpeg", "form_factor": "narrow", "label": "Trigger" },
+    { "src": "./screenshots/8.jpg", "sizes": "1080x2400", "type": "image/jpeg", "form_factor": "narrow", "label": "Storico educatore" }
   ],
   "shortcuts": [
     {
