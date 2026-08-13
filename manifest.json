@@ -12,54 +12,24 @@
   "lang": "it",
   "categories": ["health", "lifestyle", "education"],
   "icons": [
-    {
-      "src": "./icons/icon-72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icons/icon-96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icons/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icons/icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icons/icon-152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icons/icon-384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    { "src": "./icons/icon-72.png", "sizes": "72x72", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-96.png", "sizes": "96x96", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-144.png", "sizes": "144x144", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-152.png", "sizes": "152x152", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "./icons/icon-384.png", "sizes": "384x384", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [
+    { "src": "./screenshots/1.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Home — OndaMia" },
+    { "src": "./screenshots/2.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Mappa Corporea" },
+    { "src": "./screenshots/3.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Sagoma interattiva" },
+    { "src": "./screenshots/4.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Meta-Emozioni" },
+    { "src": "./screenshots/5.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Respirazione guidata" },
+    { "src": "./screenshots/6.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Intelligenza Emotiva" },
+    { "src": "./screenshots/7.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Trigger" },
+    { "src": "./screenshots/8.jpg", "type": "image/jpeg", "form_factor": "narrow", "label": "Storico educatore" }
   ],
   "shortcuts": [
     {
